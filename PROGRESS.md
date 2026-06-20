@@ -9,22 +9,29 @@ importing from `method/`.
 
 ## Results
 
-A local 120,000-step check reproduced the qualitative Figure 3 pattern:
+The current `scoring/scores.json` reproduces the qualitative Figure 3 pattern:
 risk-neutral training remained near the suboptimal reward peak around 0.6,
 while beta 4 and beta 8 moved to the high-reward global peak around 0.97.
-The submitted job will regenerate the official `scoring/scores.json`.
+`python validate.py --compare` passes and reports that the artifact-based
+evaluation preserves the expected separation between trapped and escaping
+policies.
 
 ## Remaining
 
-Run the full benchmark job, inspect `scoring/scores.json`, and update the
-milestone if the risk-sensitive runs reproduce the reported escape behavior.
-The large LLM math pass@k results remain outside this initial CPU reproduction.
+The core Section 5 bandit claim is reproduced. The next useful extension is to
+run additional random seeds or implement a scaled LLM RLVR experiment if enough
+compute and a suitable open model/dataset are available. The large LLM math
+pass@k results remain outside this CPU reproduction.
 
 ## Issues
 
 The released repository only contains the lightweight bandit and advantage
 snippet, not a full VeRL training configuration for the math experiments. The
 bandit experiment is therefore the first reproducible core mechanism.
+
+The inherited workspace had no scheduler logs available at audit time, so a
+fresh CPU job is being submitted to regenerate the current artifacts through the
+standard end-to-end script.
 
 ## Deviations from Paper
 
