@@ -20,21 +20,28 @@ REFERENCE_METHOD_NAMES = {
 }
 
 RUN_KEY_RE = re.compile(r"^(?P<base>.+?)(?:_seed_(?P<seed>-?\d+))?$")
+MIN_RUNS_PER_METHOD = 4
 
 
 def summarize_run(run: dict) -> dict[str, float]:
     rewards = run["reward_by_arm"]
     final_policy = run["final_policy"]
     local_arm = int(run["metadata"]["local_arm"])
+    global_arm = int(run["metadata"]["global_arm"])
     expected_reward = sum(p * r for p, r in zip(final_policy, rewards))
     global_peak_probability = sum(
         prob for prob, reward in zip(final_policy, rewards) if reward >= 0.9
     )
+    local_peak_probability = sum(
+        prob for arm, prob in enumerate(final_policy) if abs(arm - local_arm) <= 5
+    )
     return {
         "expected_reward": float(expected_reward),
         "mean_reward_last_1000": float(run["mean_reward_last_1000"]),
+        "optimal_action_probability": float(final_policy[global_arm]),
         "global_peak_probability": float(global_peak_probability),
         "local_action_probability": float(final_policy[local_arm]),
+        "local_peak_probability": float(local_peak_probability),
         "global_peak_success_rate": float(
             expected_reward >= 0.9 and global_peak_probability >= 0.5
         ),
@@ -74,8 +81,11 @@ def group_runs(runs: dict) -> dict[str, list[tuple[int | None, str, dict]]]:
 
 def select_test_runs(run_items: list[tuple[int | None, str, dict]]) -> list[dict]:
     ordered = sorted(run_items, key=lambda item: (item[0] is None, item[0] or 0, item[1]))
-    if len(ordered) == 1:
-        return [ordered[0][2]]
+    if len(ordered) < MIN_RUNS_PER_METHOD:
+        raise ValueError(
+            f"Need at least {MIN_RUNS_PER_METHOD} saved runs per method for a "
+            "non-degenerate train/test split."
+        )
     return [run for index, (_, _, run) in enumerate(ordered) if index % 2 == 1]
 
 
@@ -119,7 +129,10 @@ def main() -> None:
     results = {}
     split_counts = {}
     for method_name in method_names:
-        selected = select_test_runs(grouped[method_name])
+        try:
+            selected = select_test_runs(grouped[method_name])
+        except ValueError as exc:
+            raise SystemExit(f"{method_name}: {exc}") from exc
         if not selected:
             raise SystemExit(f"No held-out test runs available for {method_name}")
         summaries = [summarize_run(run) for run in selected]
