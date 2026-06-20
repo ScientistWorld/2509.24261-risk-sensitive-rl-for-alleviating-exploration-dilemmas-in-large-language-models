@@ -5,9 +5,10 @@
 Implemented the paper's risk-sensitive policy-gradient advantage and the
 Section 5 100-arm bandit reproduction. The method writes artifacts under
 `checkpoints/`, and `scripts/evaluate.sh` scores those artifacts without
-importing from `method/`. This reaches `core_claim` because the reproduced
-experiment directly tests the paper's central mechanism: risk-seeking
-advantages help a sharply biased policy escape a local reward optimum.
+importing from `method/`. This reaches `core_claim_plus` because the reproduced
+experiment directly tests the paper's central mechanism and now verifies the
+effect across ten seeds per beta: risk-seeking advantages help a sharply biased
+policy escape a local reward optimum.
 
 Continuation audit on 2026-06-20 confirmed that the implementation is faithful
 for the Section 5 bandit but does not cover the paper's large LLM RLVR
@@ -34,7 +35,8 @@ The packaged CPU job `a8ca55da-260` completed successfully and produced:
 The multi-seed job `da5a6748-fb3` completed the 40 bandit runs but failed
 validation because `scores.json` included diagnostic standard deviations and
 seed counts that were not declared benchmark metrics. The evaluator now writes
-only reference metrics. Regenerating scores from the completed artifact gives:
+only reference metrics. Retry job `2273f1d7-39c` reran the same multi-seed
+script in the container and passed `python validate.py --compare`, giving:
 
 - `grpo_beta0`: expected reward 0.598, global-peak success rate 0.0
 - `rs_grpo_beta2`: expected reward 0.596, global-peak success rate 0.0
@@ -43,10 +45,9 @@ only reference metrics. Regenerating scores from the completed artifact gives:
 
 ## Remaining
 
-The core Section 5 bandit claim is reproduced and scheduler-verified. A retry
-job is queued to rerun the multi-seed robustness script with the fixed
-evaluator. The large LLM math pass@k results remain outside this CPU
-reproduction.
+The core Section 5 bandit claim is reproduced and scheduler-verified, including
+the multi-seed robustness extension. The large LLM math pass@k results remain
+outside this CPU reproduction.
 
 ## Issues
 
