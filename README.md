@@ -84,24 +84,29 @@ sufficiently risk-seeking updates move to the global peak.
   Higher is better.
 - `mean_reward_last_1000`: average sampled reward over the final 1000
   interactions. Higher is better.
+- `optimal_action_probability`: final probability assigned to the single best
+  action. Higher is better.
 - `global_peak_probability`: final probability assigned to arms in the global
   reward peak region. Higher is better.
+- `global_peak_success_rate`: fraction of independent runs that reach the
+  global peak with high expected reward. Higher is better.
 - `local_action_probability`: final probability assigned to the suboptimal
   initially favored action. Lower is better.
+- `local_peak_probability`: final probability retained in the initially favored
+  local neighborhood. Lower is better.
 
 ## Baselines and Targets
 
-The risk-neutral reference is expected to remain near the suboptimal peak in the
-100-arm benchmark, with final reward around 0.6. Successful exploratory
+The provided reference baseline is expected to remain near the suboptimal peak
+in the 100-arm benchmark, with final reward around 0.6. Successful exploratory
 optimization should reach the global peak, with final reward near 1.0 and high
 probability on the optimal action.
 
 ## Evaluation Protocol
 
-Run the fixed 100-arm benchmark from the paper's Section 5 with the same initial
-policy, batch size 16, and learning rate 0.1. `scripts/evaluate.sh` reads saved
-artifacts from `checkpoints/` and writes `scoring/scores.json`; it does not
-rerun training.
+Run the fixed 100-arm benchmark with the same initial policy, batch size 16, and
+learning rate 0.1. `scripts/evaluate.sh` reads saved artifacts from
+`checkpoints/` and writes `scoring/scores.json`; it does not rerun training.
 
 ---
 
@@ -302,6 +307,34 @@ rerun training.
 
 </details>
 
+### Iteration 8: gpt-5.5 (verifier)
+- **Milestone**: `core_claim_plus` | **Status**: done
+- **Working time**: 4m | **GPU**: 0.0h
+- **Jobs**: 5 total (3 completed, 2 failed)
+
+<details>
+<summary>Progress Log</summary>
+
+### [2026-06-20 09:28] - core_claim
+- Scheduler job reproduced the Section 5 100-arm bandit mechanism: risk-neutral policy gradient stayed near the suboptimal local peak while sufficiently risk-seeking RS-GRPO moved to the global peak.
+- `scripts/evaluate.sh` generated `scoring/scores.json` from saved artifacts and `python validate.py --compare` passed.
+
+### [2026-06-20 10:05] - core_claim
+- Audited the implementation against the paper and public RS-GRPO repository.
+- Fixed diagnostic history saving and aligned beta comparisons to use the same rollout seed protocol; submitting a fresh ten-seed CPU verification job.
+
+### [2026-06-20 10:15] - core_claim_plus
+- Audited the continued workspace and confirmed the implementation uses the paper's risk-sensitive advantage from Eq. 8 on the Section 5 100-arm bandit, not a surrogate.
+- Verified that `eval/` reads saved artifacts without importing `method/`, `scripts/evaluate.sh` works standalone, and `python validate.py --compare` passes.
+- Restored `core_claim_plus` because the verified run covers the central bandit mechanism across beta values and ten rollout seeds.
+
+### [2026-06-20 10:18] - core_claim_plus
+- Final verification kept the milestone at `core_claim_plus`.
+- Fixed method-agnostic wording in documentation and made the top-level evaluator preserve arbitrary future method keys.
+- Re-ran `scripts/evaluate.sh`, `python validate.py --compare`, and a custom-key evaluator smoke test.
+
+</details>
+
 
 ---
 
@@ -310,4 +343,4 @@ rerun training.
 **Current: core_claim_plus**
 
 ## Stop Justification
-- Completed at milestone `core_claim`.
+- Completed at milestone `core_claim_plus`.
