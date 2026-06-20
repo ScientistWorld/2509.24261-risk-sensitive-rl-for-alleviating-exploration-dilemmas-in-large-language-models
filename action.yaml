@@ -1,5 +1,5 @@
-action: submit
+action: done
 gpus: 0
-test: true
+test: false
 milestone: core_claim_plus
-notes: "CPU verification rerun after hardening eval to reject artifacts that do not match the fixed Section 5 bandit benchmark."
+notes: "Final verification passed: separation, scoring, portability, and artifact-based evaluators are ready for gym use."
