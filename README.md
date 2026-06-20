@@ -172,7 +172,7 @@ rerun training.
 
 # Reproduction Milestones
 
-**Current: core_claim**
+**Current: method_runs**
 
 ## Stop Justification
-- Completed at milestone `core_claim`.
+- Completed at milestone `method_runs`.
