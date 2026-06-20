@@ -28,8 +28,4 @@
 - Reproduced the Section 5 bandit core claim: risk-neutral and low-beta training remain near the local optimum, while beta 4 and beta 8 converge to the global optimum.
 
 ## Stop Justification
-
-Reached `core_claim` with a scheduler-verified reproduction of the paper's core
-risk-sensitive exploration mechanism. Full LLM RLVR pass@k reproduction remains
-outside this packaged CPU reproduction because the public release does not
-include the full VeRL training setup for those experiments.
+- Completed at milestone `core_claim`.
