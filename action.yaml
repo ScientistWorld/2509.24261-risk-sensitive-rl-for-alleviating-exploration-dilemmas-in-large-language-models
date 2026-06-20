@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: done
-gpus: 0
+action: pending
+gpus: 1
 test: false
-milestone: core_claim_plus
-notes: "Scheduler-verified multi-seed Section 5 bandit robustness reproduction; beta 4/8 escape in all seeds while beta 0/2 remain trapped."
+milestone: core_claim
+notes: ""
