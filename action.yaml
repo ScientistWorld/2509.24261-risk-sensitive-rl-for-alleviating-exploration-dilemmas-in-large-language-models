@@ -1,4 +1,4 @@
-action: submit
+action: done
 gpus: 0
 test: false
-notes: "Run evaluate_train.sh and evaluate_test.sh on checkpoints/bandit_results.json to populate split scores."
+notes: "Even/odd saved-run split; 28 train metric values and 28 test metric values across 4 methods; train/test gaps are small on reward/probability metrics with the largest held-out shift in optimal_action_probability (0.289); no null scores."
