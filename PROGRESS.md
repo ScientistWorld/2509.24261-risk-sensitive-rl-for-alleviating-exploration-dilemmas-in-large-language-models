@@ -16,12 +16,19 @@ while beta 4 and beta 8 moved to the high-reward global peak around 0.97.
 evaluation preserves the expected separation between trapped and escaping
 policies.
 
+The packaged CPU job `a8ca55da-260` completed successfully and produced:
+
+- `grpo_beta0`: expected reward 0.598, global-peak probability 0.000
+- `rs_grpo_beta2`: expected reward 0.596, global-peak probability 0.001
+- `rs_grpo_beta4`: expected reward 0.976, global-peak probability 0.989
+- `rs_grpo_beta8`: expected reward 0.972, global-peak probability 0.984
+
 ## Remaining
 
-The core Section 5 bandit claim is reproduced. The next useful extension is to
-run additional random seeds or implement a scaled LLM RLVR experiment if enough
-compute and a suitable open model/dataset are available. The large LLM math
-pass@k results remain outside this CPU reproduction.
+The core Section 5 bandit claim is reproduced and scheduler-verified. The next
+useful extension would be additional random seeds or a scaled LLM RLVR
+experiment if a future agent adds a suitable open model/dataset setup. The
+large LLM math pass@k results remain outside this CPU reproduction.
 
 ## Issues
 
@@ -35,6 +42,8 @@ inside the container, so `from data.bandit_spec` failed. The standard shell
 entrypoints now export `PYTHONPATH=/home/user:${PYTHONPATH:-}` before invoking
 Python. A tiny `tmp/` smoke run verified that the method and evaluator imports
 work through this path.
+
+The retry job `a8ca55da-260` confirmed the fix.
 
 ## Deviations from Paper
 

@@ -1,5 +1,3 @@
-action: submit
-gpus: 0
-test: true
+action: done
 milestone: core_claim
-notes: "Fixed container import path by exporting PYTHONPATH in scripts; resubmitting CPU reproduction and validation job."
+notes: "Scheduler-verified RS-GRPO Section 5 bandit reproduction reached core_claim; environment is packaged and validation passes."
