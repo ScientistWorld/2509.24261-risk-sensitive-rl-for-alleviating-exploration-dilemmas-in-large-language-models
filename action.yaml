@@ -1,5 +1,5 @@
 action: done
 gpus: 0
 test: false
-milestone: core_claim
-notes: "Packaging audit passed: procedural benchmark needs no external downloads; scripts and validation checks pass."
+milestone: core_claim_plus
+notes: "Packaging audit passed: procedural benchmark needs no external downloads; scripts and validation checks pass; Section 5 bandit core mechanism is reproduced across multiple beta settings and rollout seeds."

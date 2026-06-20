@@ -18,4 +18,4 @@
 - Restored `core_claim_plus` because the verified run covers the central bandit mechanism across beta values and ten rollout seeds.
 
 ## Stop Justification
-- Completed at milestone `core_claim`.
+- Completed at milestone `core_claim_plus`.
