@@ -1,5 +1,5 @@
-action: submit
+action: done
 gpus: 0
 test: false
 milestone: core_claim
-notes: "CPU verification: rerun split scoring, rerun the actual RS-GRPO bandit method, regenerate scores.json with all reference metrics, and validate --compare."
+notes: "Packaging audit passed: procedural benchmark needs no external downloads; scripts and validation checks pass."
