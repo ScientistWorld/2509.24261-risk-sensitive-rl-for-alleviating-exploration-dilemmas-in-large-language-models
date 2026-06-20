@@ -1,4 +1,4 @@
-"""Problem specifications for the RS-GRPO reproduction.
+"""Problem specifications for the bandit exploration benchmark.
 
 This module is method-agnostic: it defines the reward landscape and initial
 policy used by the benchmark, but it does not implement any optimizer.

@@ -1,4 +1,4 @@
-"""Evaluate saved RS-GRPO bandit artifacts without importing method code."""
+"""Evaluate saved bandit artifacts without importing method code."""
 
 from __future__ import annotations
 
@@ -8,14 +8,14 @@ import re
 from pathlib import Path
 
 
-METHOD_NAMES = {
+REFERENCE_METHOD_NAMES = {
     "beta_0": "grpo_beta0",
     "beta_2": "rs_grpo_beta2",
     "beta_4": "rs_grpo_beta4",
     "beta_8": "rs_grpo_beta8",
 }
 
-RUN_KEY_RE = re.compile(r"^(beta_[^_]+)(?:_seed_[-0-9]+)?$")
+RUN_KEY_RE = re.compile(r"^(?P<base>.+?)(?:_seed_(?P<seed>-?\d+))?$")
 
 
 def summarize_run(run: dict) -> dict[str, float]:
@@ -52,6 +52,19 @@ def aggregate_runs(summaries: list[dict[str, float]]) -> dict[str, float]:
     return aggregate
 
 
+def parse_run_key(key: str) -> tuple[str, int | None]:
+    match = RUN_KEY_RE.match(key)
+    if not match:
+        return key, None
+    base = match.group("base")
+    seed_text = match.group("seed")
+    return base, int(seed_text) if seed_text is not None else None
+
+
+def canonical_method_name(base_key: str) -> str:
+    return REFERENCE_METHOD_NAMES.get(base_key, base_key)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -69,19 +82,15 @@ def main() -> None:
 
     grouped: dict[str, list[dict[str, float]]] = {}
     for key, run in runs.items():
-        match = RUN_KEY_RE.match(key)
-        base_key = match.group(1) if match else key
-        method_name = METHOD_NAMES.get(base_key)
-        if method_name is None:
-            continue
+        base_key, _ = parse_run_key(key)
+        method_name = canonical_method_name(base_key)
         grouped.setdefault(method_name, []).append(summarize_run(run))
 
     for method_name, summaries in grouped.items():
         scores["experiments"]["bandit_escape"]["results"][method_name] = aggregate_runs(summaries)
 
     if not scores["experiments"]["bandit_escape"]["results"]:
-        known = ", ".join(sorted(METHOD_NAMES))
-        raise SystemExit(f"No recognized bandit runs found in {args.input}; expected keys like: {known}")
+        raise SystemExit(f"No bandit runs found in {args.input}")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(scores, indent=2))

@@ -8,5 +8,5 @@ is intended to distinguish genuine exploration of better low-probability
 actions from methods that only reinforce the initially likely region.
 
 The default reproduction runs multiple independent stochastic seeds for each
-risk setting and aggregates the final policies. This checks that the threshold
-behavior is robust rather than a lucky trajectory from one random seed.
+reported configuration and aggregates the final policies. This checks that the
+escape behavior is robust rather than a lucky trajectory from one random seed.

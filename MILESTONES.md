@@ -17,5 +17,10 @@
 - Verified that `eval/` reads saved artifacts without importing `method/`, `scripts/evaluate.sh` works standalone, and `python validate.py --compare` passes.
 - Restored `core_claim_plus` because the verified run covers the central bandit mechanism across beta values and ten rollout seeds.
 
+### [2026-06-20 10:18] - core_claim_plus
+- Final verification kept the milestone at `core_claim_plus`.
+- Fixed method-agnostic wording in documentation and made the top-level evaluator preserve arbitrary future method keys.
+- Re-ran `scripts/evaluate.sh`, `python validate.py --compare`, and a custom-key evaluator smoke test.
+
 ## Stop Justification
 - Completed at milestone `core_claim_plus`.
