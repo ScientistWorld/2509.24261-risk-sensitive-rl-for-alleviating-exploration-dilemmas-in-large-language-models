@@ -16,6 +16,7 @@
 set -e
 
 cd /home/user
+export PYTHONPATH="/home/user:${PYTHONPATH:-}"
 
 STEPS="${RS_GRPO_STEPS:-120000}"
 python baseline/grpo_bandit.py --steps "$STEPS" --output checkpoints/bandit_baseline.json

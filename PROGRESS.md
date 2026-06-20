@@ -29,9 +29,12 @@ The released repository only contains the lightweight bandit and advantage
 snippet, not a full VeRL training configuration for the math experiments. The
 bandit experiment is therefore the first reproducible core mechanism.
 
-The inherited workspace had no scheduler logs available at audit time, so a
-fresh CPU job is being submitted to regenerate the current artifacts through the
-standard end-to-end script.
+Job `4532f67a-4ac` failed before executing the experiment because
+`python method/rs_grpo_bandit.py` used `/home/user/method` as the import root
+inside the container, so `from data.bandit_spec` failed. The standard shell
+entrypoints now export `PYTHONPATH=/home/user:${PYTHONPATH:-}` before invoking
+Python. A tiny `tmp/` smoke run verified that the method and evaluator imports
+work through this path.
 
 ## Deviations from Paper
 

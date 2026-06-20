@@ -9,6 +9,7 @@
 set -e
 
 cd /home/user
+export PYTHONPATH="/home/user:${PYTHONPATH:-}"
 
 STEPS="${RS_GRPO_STEPS:-120000}"
 
