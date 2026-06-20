@@ -73,6 +73,10 @@ def main() -> None:
     for method_name, summaries in grouped.items():
         scores["experiments"]["bandit_escape"]["results"][method_name] = aggregate_runs(summaries)
 
+    if not scores["experiments"]["bandit_escape"]["results"]:
+        known = ", ".join(sorted(METHOD_NAMES))
+        raise SystemExit(f"No recognized bandit runs found in {args.input}; expected keys like: {known}")
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(scores, indent=2))
     print(f"Wrote {args.output}")

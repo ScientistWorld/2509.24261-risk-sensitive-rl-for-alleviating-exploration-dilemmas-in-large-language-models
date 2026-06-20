@@ -76,7 +76,7 @@ def policy_gradient_update(
 
 
 def run_bandit(config: RunConfig) -> dict:
-    rng = random.Random(config.seed + int(config.beta * 1000))
+    rng = random.Random(config.seed)
     rewards_by_arm = bimodal_bandit_rewards()
     logits = local_optimum_initial_logits(len(rewards_by_arm))
     meta = bandit_metadata()
@@ -116,7 +116,7 @@ def run_bandit(config: RunConfig) -> dict:
     expected_reward = sum(p * r for p, r in zip(final_policy, rewards_by_arm))
     best_arm = max(range(len(final_policy)), key=lambda i: final_policy[i])
 
-    return {
+    result = {
         "config": asdict(config),
         "metadata": meta,
         "reward_by_arm": rewards_by_arm,
