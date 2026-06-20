@@ -1,5 +1,5 @@
-action: done
+action: submit
 gpus: 0
-test: false
+test: true
 milestone: core_claim_plus
-notes: "Final verification passed: docs are method-safe, evaluator supports arbitrary method keys, validation passes, and the Section 5 bandit gym is ready at core_claim_plus."
+notes: "CPU verification rerun after hardening eval to reject artifacts that do not match the fixed Section 5 bandit benchmark."

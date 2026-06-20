@@ -16,6 +16,14 @@ pass@k/pass@1 experiments. To strengthen the supported claim without replacing
 the algorithm, the method and evaluator now support multi-seed aggregation for
 the same paper bandit protocol.
 
+The 2026-06-20 10:22 audit rechecked the paper's Appendix E requirements and a
+parallel extraction confirmed that full math-benchmark reproduction would need
+the paper's VeRL/vLLM stack, 1.5B+ model training, and large-sample pass@k
+evaluation. With the available 3 GPU-hour budget, the packaged gym remains the
+paper's actual Section 5 algorithmic mechanism rather than a tiny LLM surrogate.
+The evaluator now validates that submitted artifacts use the fixed reward
+landscape and metadata from `data/bandit_spec.py`.
+
 ## Results
 
 The current `scoring/scores.json` reproduces the qualitative Figure 3 pattern:
@@ -72,6 +80,14 @@ released bandit comparison protocol, and `--save-history` now correctly writes
 diagnostic trajectories. Job `2273f1d7-39c` verified the patched default
 ten-seed run inside the container, and a continuation audit restored the
 milestone to `core_claim_plus`.
+
+After hardening `eval/`, local checks passed:
+
+- `bash scripts/evaluate.sh checkpoints/bandit_results.json`
+- `bash scripts/evaluate_train.sh checkpoints/bandit_results.json`
+- `bash scripts/evaluate_test.sh checkpoints/bandit_results.json`
+- `python -m py_compile` on data, method, baseline, and evaluator modules
+- `python validate.py --compare`
 
 ## Deviations from Paper
 

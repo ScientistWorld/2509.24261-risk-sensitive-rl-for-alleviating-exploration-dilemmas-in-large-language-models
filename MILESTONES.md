@@ -22,5 +22,10 @@
 - Fixed method-agnostic wording in documentation and made the top-level evaluator preserve arbitrary future method keys.
 - Re-ran `scripts/evaluate.sh`, `python validate.py --compare`, and a custom-key evaluator smoke test.
 
+### [2026-06-20 10:22] - core_claim_plus
+- Re-audited the paper with a parallel extractor: the reproducible implementation remains scoped to the paper's Section 5 bandit because full LLM RS-GRPO would require VeRL/vLLM, 1.5B+ models, and benchmark-scale sampling beyond the current 3 GPU-hour budget.
+- Hardened all bandit evaluators to reject artifacts whose reward landscape, metadata, or final policy shape do not match the fixed benchmark in `data/bandit_spec.py`.
+- Local artifact scoring, train/test slice scoring, bytecode compilation, and `python validate.py --compare` pass after the evaluator hardening.
+
 ## Stop Justification
-- Completed at milestone `core_claim_plus`.
+- Not stopping this turn. Submitting a CPU verification job after evaluator hardening.

@@ -11,6 +11,8 @@ import json
 import re
 from pathlib import Path
 
+from data.bandit_spec import bandit_metadata, bimodal_bandit_rewards
+
 
 REFERENCE_METHOD_NAMES = {
     "beta_0": "grpo_beta0",
@@ -21,6 +23,29 @@ REFERENCE_METHOD_NAMES = {
 
 RUN_KEY_RE = re.compile(r"^(?P<base>.+?)(?:_seed_(?P<seed>-?\d+))?$")
 MIN_RUNS_PER_METHOD = 4
+
+
+def validate_run(key: str, run: dict) -> None:
+    """Reject artifacts that do not use the fixed benchmark definition."""
+    expected_rewards = bimodal_bandit_rewards()
+    expected_meta = bandit_metadata()
+
+    rewards = run.get("reward_by_arm")
+    if rewards != expected_rewards:
+        raise ValueError(f"{key}: reward_by_arm does not match data/bandit_spec.py")
+
+    metadata = run.get("metadata", {})
+    for field in ("n_arms", "global_arm", "local_arm"):
+        if int(metadata.get(field, -1)) != int(expected_meta[field]):
+            raise ValueError(f"{key}: metadata.{field} does not match data/bandit_spec.py")
+
+    final_policy = run.get("final_policy")
+    if not isinstance(final_policy, list) or len(final_policy) != len(expected_rewards):
+        raise ValueError(f"{key}: final_policy must contain {len(expected_rewards)} probabilities")
+    if any((not isinstance(prob, (int, float))) or prob < 0 for prob in final_policy):
+        raise ValueError(f"{key}: final_policy contains a non-numeric or negative probability")
+    if abs(sum(final_policy) - 1.0) > 1e-6:
+        raise ValueError(f"{key}: final_policy probabilities must sum to 1")
 
 
 def summarize_run(run: dict) -> dict[str, float]:
@@ -73,6 +98,7 @@ def canonical_method_name(base_key: str) -> str:
 def group_runs(runs: dict) -> dict[str, list[tuple[int | None, str, dict]]]:
     grouped: dict[str, list[tuple[int | None, str, dict]]] = {}
     for key, run in runs.items():
+        validate_run(key, run)
         base_key, seed = parse_run_key(key)
         method_name = canonical_method_name(base_key)
         grouped.setdefault(method_name, []).append((seed, key, run))
