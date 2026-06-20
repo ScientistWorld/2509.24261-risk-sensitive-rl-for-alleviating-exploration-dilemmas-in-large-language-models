@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: submit
+action: done
 gpus: 0
 test: true
-milestone: core_claim
-notes: "CPU test-node verification after fidelity fixes: rerun the default ten-seed RS-GRPO bandit reproduction and validate regenerated scores."
+milestone: core_claim_plus
+notes: "Continuation audit passed. Restored core_claim_plus for the scheduler-verified Section 5 ten-seed RS-GRPO bandit reproduction; full LLM math RLVR experiments remain unreproduced."

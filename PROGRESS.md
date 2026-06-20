@@ -69,11 +69,9 @@ that the released project provides `codes/bandit.py` and a VeRL advantage
 snippet, but no full math-benchmark training stack. The local implementation
 was adjusted to use the same rollout seed for every beta setting, matching the
 released bandit comparison protocol, and `--save-history` now correctly writes
-diagnostic trajectories. A short smoke run verified the patched entrypoints;
-the full default scores are being regenerated in the next CPU job. A one-seed
-local sanity check at 120,000 steps produced the expected qualitative pattern:
-`grpo_beta0` expected reward 0.598, `rs_grpo_beta4` 0.994, and `rs_grpo_beta8`
-0.990.
+diagnostic trajectories. Job `2273f1d7-39c` verified the patched default
+ten-seed run inside the container, and a continuation audit restored the
+milestone to `core_claim_plus`.
 
 ## Deviations from Paper
 
