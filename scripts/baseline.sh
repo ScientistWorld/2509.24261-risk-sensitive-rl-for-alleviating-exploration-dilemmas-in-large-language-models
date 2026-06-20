@@ -17,4 +17,6 @@ set -e
 
 cd /home/user
 
-# TODO: run baseline
+STEPS="${RS_GRPO_STEPS:-120000}"
+python baseline/grpo_bandit.py --steps "$STEPS" --output checkpoints/bandit_baseline.json
+bash scripts/evaluate.sh checkpoints/bandit_baseline.json

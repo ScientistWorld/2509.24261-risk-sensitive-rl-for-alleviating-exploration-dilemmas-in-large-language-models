@@ -10,5 +10,14 @@ set -e
 
 cd /home/user
 
-# TODO: run the paper's method
-# TODO: call scripts/evaluate.sh to score
+STEPS="${RS_GRPO_STEPS:-120000}"
+
+python method/rs_grpo_bandit.py \
+  --betas 0 2 4 8 \
+  --steps "$STEPS" \
+  --batch-size 16 \
+  --learning-rate 0.1 \
+  --seed 42 \
+  --output checkpoints/bandit_results.json
+
+bash scripts/evaluate.sh checkpoints/bandit_results.json

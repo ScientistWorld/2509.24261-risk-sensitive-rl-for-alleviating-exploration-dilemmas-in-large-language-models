@@ -16,4 +16,4 @@
 
 set -e
 
-# uv pip install --system <packages>
+# No third-party Python packages are required for the CPU bandit reproduction.

@@ -1,0 +1,32 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "results": {
+        "grpo_beta0": {
+          "expected_reward": 0.5977892736143137,
+          "mean_reward_last_1000": 0.5978499370433518,
+          "global_peak_probability": 0.00038539746881338476,
+          "local_action_probability": 0.977405470421146
+        },
+        "rs_grpo_beta2": {
+          "expected_reward": 0.5964310802387435,
+          "mean_reward_last_1000": 0.597538887407944,
+          "global_peak_probability": 0.0010597789034593255,
+          "local_action_probability": 0.9607431927582718
+        },
+        "rs_grpo_beta4": {
+          "expected_reward": 0.9760661282537478,
+          "mean_reward_last_1000": 0.9740893814906407,
+          "global_peak_probability": 0.988910508148289,
+          "local_action_probability": 0.0016931670077077413
+        },
+        "rs_grpo_beta8": {
+          "expected_reward": 0.9721505761603901,
+          "mean_reward_last_1000": 0.9718498785737412,
+          "global_peak_probability": 0.9837749283641025,
+          "local_action_probability": 0.0010377998748192882
+        }
+      }
+    }
+  }
+}

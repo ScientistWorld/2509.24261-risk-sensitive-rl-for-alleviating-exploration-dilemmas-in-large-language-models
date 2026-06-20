@@ -1,21 +1,15 @@
 # Reproduction Milestones
 
-**Current: none**
-
-<!-- Milestone levels (update "Current" above as you progress):
-  none             — just started, no meaningful progress yet
-  method_runs      — the paper's method executes end-to-end without errors
-  core_claim       — minimum experiment supports the paper's central claim
-  core_claim_plus  — core claim reproduced on additional settings
-  secondary_claims — secondary results or contributions reproduced
-  majority         — more than half of reported results reproduced
-  near_complete    — most results reproduced, only minor gaps remain
-  full             — all reported results reproduced
--->
+**Current: method_runs**
 
 ## Progress Log
 
-<!-- Write your progress here -->
+### [2026-06-20 00:00] - none
+- Read the paper and identified RS-GRPO's core computation: replacing GRPO's advantage with the risk-sensitive exponential-utility advantage.
+- Implemented the paper's 100-arm bandit environment, GRPO baseline, RS-GRPO method, and artifact-based evaluator.
+
+### [2026-06-20 00:20] - method_runs
+- Verified that `scripts/method.sh` executes end-to-end on a smoke run and writes `scoring/scores.json`.
+- A local 120,000-step check reproduced the expected bandit behavior; submitting the same pipeline as a CPU job for official scoring.
 
 ## Stop Justification
-- Completed at milestone `none`.
