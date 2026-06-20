@@ -31,12 +31,22 @@ The packaged CPU job `a8ca55da-260` completed successfully and produced:
 - `rs_grpo_beta4`: expected reward 0.976, global-peak probability 0.989
 - `rs_grpo_beta8`: expected reward 0.972, global-peak probability 0.984
 
+The multi-seed job `da5a6748-fb3` completed the 40 bandit runs but failed
+validation because `scores.json` included diagnostic standard deviations and
+seed counts that were not declared benchmark metrics. The evaluator now writes
+only reference metrics. Regenerating scores from the completed artifact gives:
+
+- `grpo_beta0`: expected reward 0.598, global-peak success rate 0.0
+- `rs_grpo_beta2`: expected reward 0.596, global-peak success rate 0.0
+- `rs_grpo_beta4`: expected reward 0.988, global-peak success rate 1.0
+- `rs_grpo_beta8`: expected reward 0.979, global-peak success rate 1.0
+
 ## Remaining
 
-The core Section 5 bandit claim is reproduced and scheduler-verified. A
-multi-seed robustness job is queued to regenerate `checkpoints/bandit_results.json`
-and `scoring/scores.json` over seeds 0 through 9. The large LLM math pass@k
-results remain outside this CPU reproduction.
+The core Section 5 bandit claim is reproduced and scheduler-verified. A retry
+job is queued to rerun the multi-seed robustness script with the fixed
+evaluator. The large LLM math pass@k results remain outside this CPU
+reproduction.
 
 ## Issues
 

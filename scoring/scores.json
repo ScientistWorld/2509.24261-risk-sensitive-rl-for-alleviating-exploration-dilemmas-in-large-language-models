@@ -4,51 +4,31 @@
       "results": {
         "grpo_beta0": {
           "expected_reward": 0.5977486755080449,
-          "expected_reward_std": 0.00019256008347791153,
           "mean_reward_last_1000": 0.5973536562015525,
-          "mean_reward_last_1000_std": 0.0006008179314466683,
           "global_peak_probability": 0.0004049770059329486,
-          "global_peak_probability_std": 3.76748811927767e-05,
           "local_action_probability": 0.9751352754908476,
-          "local_action_probability_std": 0.00625268026660364,
-          "global_peak_success_rate": 0.0,
-          "num_seeds": 10.0
+          "global_peak_success_rate": 0.0
         },
         "rs_grpo_beta2": {
           "expected_reward": 0.5962413992313526,
-          "expected_reward_std": 0.00028061141678475184,
           "mean_reward_last_1000": 0.5957718479191857,
-          "mean_reward_last_1000_std": 0.0007416262791835541,
           "global_peak_probability": 0.001252503780499876,
-          "global_peak_probability_std": 0.0001610683329797255,
           "local_action_probability": 0.9607576743601026,
-          "local_action_probability_std": 0.008514317270346794,
-          "global_peak_success_rate": 0.0,
-          "num_seeds": 10.0
+          "global_peak_success_rate": 0.0
         },
         "rs_grpo_beta4": {
           "expected_reward": 0.9883770152986033,
-          "expected_reward_std": 0.00808950410159953,
           "mean_reward_last_1000": 0.9875590318118684,
-          "mean_reward_last_1000_std": 0.008546324267503512,
           "global_peak_probability": 0.98907643132175,
-          "global_peak_probability_std": 0.000825938505385977,
           "local_action_probability": 0.0014396208780395445,
-          "local_action_probability_std": 0.00021198498560329431,
-          "global_peak_success_rate": 1.0,
-          "num_seeds": 10.0
+          "global_peak_success_rate": 1.0
         },
         "rs_grpo_beta8": {
           "expected_reward": 0.9793453644529138,
-          "expected_reward_std": 0.010250536537634915,
           "mean_reward_last_1000": 0.9787187480136585,
-          "mean_reward_last_1000_std": 0.010518045228626042,
           "global_peak_probability": 0.980193080397245,
-          "global_peak_probability_std": 0.008942657340896708,
           "local_action_probability": 0.0011536104426219176,
-          "local_action_probability_std": 0.0004156249574378613,
-          "global_peak_success_rate": 1.0,
-          "num_seeds": 10.0
+          "global_peak_success_rate": 1.0
         }
       }
     }

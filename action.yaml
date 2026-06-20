@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: true
 milestone: core_claim
-notes: "Run the multi-seed Section 5 bandit robustness extension over seeds 0-9 and regenerate scores.json."
+notes: "Retry multi-seed Section 5 bandit robustness run after fixing evaluator to emit only reference metrics."

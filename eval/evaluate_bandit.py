@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import statistics
 from pathlib import Path
 
 
@@ -43,10 +42,7 @@ def aggregate_runs(summaries: list[dict[str, float]]) -> dict[str, float]:
     aggregate = {}
     for metric in metrics:
         values = [summary[metric] for summary in summaries]
-        aggregate[metric] = float(statistics.fmean(values))
-        if len(values) > 1 and metric != "global_peak_success_rate":
-            aggregate[f"{metric}_std"] = float(statistics.pstdev(values))
-    aggregate["num_seeds"] = float(len(summaries))
+        aggregate[metric] = float(sum(values) / len(values))
     return aggregate
 
 
