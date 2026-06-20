@@ -24,6 +24,7 @@ class RunConfig:
     batch_size: int = 16
     learning_rate: float = 0.1
     seed: int = 42
+    save_history: bool = False
 
 
 def stable_softmax(logits: list[float]) -> list[float]:
@@ -125,11 +126,17 @@ def run_bandit(config: RunConfig) -> dict:
         "optimal_action_probability": final_policy[meta["global_arm"]],
         "local_action_probability": final_policy[meta["local_arm"]],
         "mean_reward_last_1000": sum(reward_history[-1000:]) / min(1000, len(reward_history)),
-        "reward_history": reward_history,
-        "entropy_history": entropy_history,
-        "optimal_prob_history": optimal_prob_history,
-        "local_prob_history": local_prob_history,
     }
+    if config.save_history:
+        result.update(
+            {
+                "reward_history": reward_history,
+                "entropy_history": entropy_history,
+                "optimal_prob_history": optimal_prob_history,
+                "local_prob_history": local_prob_history,
+            }
+        )
+    return result
 
 
 def main() -> None:
@@ -139,21 +146,34 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--learning-rate", type=float, default=0.1)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--seeds",
+        nargs="+",
+        type=int,
+        help="Run multiple independent seeds. Overrides --seed when provided.",
+    )
+    parser.add_argument("--save-history", action="store_true")
     parser.add_argument("--output", type=Path, default=Path("checkpoints/bandit_results.json"))
     args = parser.parse_args()
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     results = {}
+    seeds = args.seeds if args.seeds is not None else [args.seed]
     for beta in args.betas:
-        results[f"beta_{format(beta, 'g')}"] = run_bandit(
-            RunConfig(
-                beta=beta,
-                steps=args.steps,
-                batch_size=args.batch_size,
-                learning_rate=args.learning_rate,
-                seed=args.seed,
+        for seed in seeds:
+            key = f"beta_{format(beta, 'g')}"
+            if len(seeds) > 1:
+                key = f"{key}_seed_{seed}"
+            results[key] = run_bandit(
+                RunConfig(
+                    beta=beta,
+                    steps=args.steps,
+                    batch_size=args.batch_size,
+                    learning_rate=args.learning_rate,
+                    seed=seed,
+                    save_history=args.save_history,
+                )
             )
-        )
     args.output.write_text(json.dumps({"bandit_escape": results}, indent=2))
     print(f"Wrote {args.output}")
 

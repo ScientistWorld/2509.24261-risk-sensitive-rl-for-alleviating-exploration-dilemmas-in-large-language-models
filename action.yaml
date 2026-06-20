@@ -1,8 +1,8 @@
 # IMPORTANT: Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends. Sleeping blocks the entire pipeline.
-action: done
+action: submit
 gpus: 0
-test: false
+test: true
 milestone: core_claim
-notes: "Reproduced the Section 5 bandit core claim: risk-sensitive beta 4/8 escape the local optimum while beta 0/2 remain trapped; validation passes."
+notes: "Run the multi-seed Section 5 bandit robustness extension over seeds 0-9 and regenerate scores.json."

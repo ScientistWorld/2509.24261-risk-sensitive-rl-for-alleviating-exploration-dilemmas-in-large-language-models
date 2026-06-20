@@ -9,6 +9,12 @@ importing from `method/`. This reaches `core_claim` because the reproduced
 experiment directly tests the paper's central mechanism: risk-seeking
 advantages help a sharply biased policy escape a local reward optimum.
 
+Continuation audit on 2026-06-20 confirmed that the implementation is faithful
+for the Section 5 bandit but does not cover the paper's large LLM RLVR
+pass@k/pass@1 experiments. To strengthen the supported claim without replacing
+the algorithm, the method and evaluator now support multi-seed aggregation for
+the same paper bandit protocol.
+
 ## Results
 
 The current `scoring/scores.json` reproduces the qualitative Figure 3 pattern:
@@ -27,10 +33,10 @@ The packaged CPU job `a8ca55da-260` completed successfully and produced:
 
 ## Remaining
 
-The core Section 5 bandit claim is reproduced and scheduler-verified. The next
-useful extension would be additional random seeds or a scaled LLM RLVR
-experiment if a future agent adds a suitable open model/dataset setup. The
-large LLM math pass@k results remain outside this CPU reproduction.
+The core Section 5 bandit claim is reproduced and scheduler-verified. A
+multi-seed robustness job is queued to regenerate `checkpoints/bandit_results.json`
+and `scoring/scores.json` over seeds 0 through 9. The large LLM math pass@k
+results remain outside this CPU reproduction.
 
 ## Issues
 

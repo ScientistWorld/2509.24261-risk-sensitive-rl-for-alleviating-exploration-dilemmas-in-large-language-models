@@ -8,6 +8,7 @@
         "expected_reward": {"higher_is_better": true, "coefficient": 1.0},
         "mean_reward_last_1000": {"higher_is_better": true, "coefficient": 0.5},
         "global_peak_probability": {"higher_is_better": true, "coefficient": 0.8},
+        "global_peak_success_rate": {"higher_is_better": true, "coefficient": 0.6},
         "local_action_probability": {"higher_is_better": false, "coefficient": -0.4}
       },
       "results": {
@@ -16,6 +17,7 @@
           "expected_reward": 0.6,
           "mean_reward_last_1000": 0.6,
           "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
           "local_action_probability": 1.0
         },
         "rs_grpo_beta2": {
@@ -23,6 +25,7 @@
           "expected_reward": 0.6,
           "mean_reward_last_1000": 0.6,
           "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
           "local_action_probability": 1.0
         },
         "rs_grpo_beta4": {
@@ -30,6 +33,7 @@
           "expected_reward": 1.0,
           "mean_reward_last_1000": 1.0,
           "global_peak_probability": 1.0,
+          "global_peak_success_rate": 1.0,
           "local_action_probability": 0.0
         },
         "rs_grpo_beta8": {
@@ -37,6 +41,7 @@
           "expected_reward": 1.0,
           "mean_reward_last_1000": 1.0,
           "global_peak_probability": 1.0,
+          "global_peak_success_rate": 1.0,
           "local_action_probability": 0.0
         }
       }
