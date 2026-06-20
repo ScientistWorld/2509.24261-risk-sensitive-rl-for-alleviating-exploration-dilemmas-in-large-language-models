@@ -1,4 +1,5 @@
-action: done
+action: submit
 gpus: 0
 test: false
-notes: "Even/odd saved-run split; 28 train metric values and 28 test metric values across 4 methods; train/test gaps are small on reward/probability metrics with the largest held-out shift in optimal_action_probability (0.289); no null scores."
+milestone: core_claim
+notes: "CPU verification: rerun split scoring, rerun the actual RS-GRPO bandit method, regenerate scores.json with all reference metrics, and validate --compare."

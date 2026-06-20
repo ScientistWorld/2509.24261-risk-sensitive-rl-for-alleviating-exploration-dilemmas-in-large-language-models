@@ -22,15 +22,21 @@ def summarize_run(run: dict) -> dict[str, float]:
     rewards = run["reward_by_arm"]
     final_policy = run["final_policy"]
     local_arm = int(run["metadata"]["local_arm"])
+    global_arm = int(run["metadata"]["global_arm"])
     expected_reward = sum(p * r for p, r in zip(final_policy, rewards))
     global_peak_probability = sum(
         prob for prob, reward in zip(final_policy, rewards) if reward >= 0.9
     )
+    local_peak_probability = sum(
+        prob for arm, prob in enumerate(final_policy) if abs(arm - local_arm) <= 5
+    )
     return {
         "expected_reward": float(expected_reward),
         "mean_reward_last_1000": float(run["mean_reward_last_1000"]),
+        "optimal_action_probability": float(final_policy[global_arm]),
         "global_peak_probability": float(global_peak_probability),
         "local_action_probability": float(final_policy[local_arm]),
+        "local_peak_probability": float(local_peak_probability),
         "global_peak_success_rate": float(
             expected_reward >= 0.9 and global_peak_probability >= 0.5
         ),
