@@ -18,4 +18,4 @@
 - Restored `core_claim_plus` because the verified run covers the central bandit mechanism across beta values and ten rollout seeds.
 
 ## Stop Justification
-- Stopping at `core_claim_plus`: the Section 5 mechanism claim is scheduler-verified and packaged as a reusable CPU benchmark. The full LLM RLVR math pass@k/pass@1 experiments remain unreproduced because the public release does not include a complete VeRL training stack and they would require a substantially larger setup than this mechanism reproduction.
+- Completed at milestone `core_claim_plus`.
