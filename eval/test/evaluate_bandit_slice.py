@@ -1,0 +1,152 @@
+"""Score the held-out test slice of saved bandit artifacts.
+
+This evaluator is intentionally method-agnostic: it reads the JSON artifact
+produced by a method and never imports from method/ or baseline/.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+from pathlib import Path
+
+
+REFERENCE_METHOD_NAMES = {
+    "beta_0": "grpo_beta0",
+    "beta_2": "rs_grpo_beta2",
+    "beta_4": "rs_grpo_beta4",
+    "beta_8": "rs_grpo_beta8",
+}
+
+RUN_KEY_RE = re.compile(r"^(?P<base>.+?)(?:_seed_(?P<seed>-?\d+))?$")
+
+
+def summarize_run(run: dict) -> dict[str, float]:
+    rewards = run["reward_by_arm"]
+    final_policy = run["final_policy"]
+    local_arm = int(run["metadata"]["local_arm"])
+    expected_reward = sum(p * r for p, r in zip(final_policy, rewards))
+    global_peak_probability = sum(
+        prob for prob, reward in zip(final_policy, rewards) if reward >= 0.9
+    )
+    return {
+        "expected_reward": float(expected_reward),
+        "mean_reward_last_1000": float(run["mean_reward_last_1000"]),
+        "global_peak_probability": float(global_peak_probability),
+        "local_action_probability": float(final_policy[local_arm]),
+        "global_peak_success_rate": float(
+            expected_reward >= 0.9 and global_peak_probability >= 0.5
+        ),
+    }
+
+
+def aggregate_runs(summaries: list[dict[str, float]]) -> dict[str, float]:
+    metrics = summaries[0].keys()
+    aggregate = {}
+    for metric in metrics:
+        values = [summary[metric] for summary in summaries]
+        aggregate[metric] = float(sum(values) / len(values))
+    return aggregate
+
+
+def parse_run_key(key: str) -> tuple[str, int | None]:
+    match = RUN_KEY_RE.match(key)
+    if not match:
+        return key, None
+    base = match.group("base")
+    seed_text = match.group("seed")
+    return base, int(seed_text) if seed_text is not None else None
+
+
+def canonical_method_name(base_key: str) -> str:
+    return REFERENCE_METHOD_NAMES.get(base_key, base_key)
+
+
+def group_runs(runs: dict) -> dict[str, list[tuple[int | None, str, dict]]]:
+    grouped: dict[str, list[tuple[int | None, str, dict]]] = {}
+    for key, run in runs.items():
+        base_key, seed = parse_run_key(key)
+        method_name = canonical_method_name(base_key)
+        grouped.setdefault(method_name, []).append((seed, key, run))
+    return grouped
+
+
+def select_test_runs(run_items: list[tuple[int | None, str, dict]]) -> list[dict]:
+    ordered = sorted(run_items, key=lambda item: (item[0] is None, item[0] or 0, item[1]))
+    if len(ordered) == 1:
+        return [ordered[0][2]]
+    return [run for index, (_, _, run) in enumerate(ordered) if index % 2 == 1]
+
+
+def train_score_methods(path: Path) -> list[str] | None:
+    if not path.exists():
+        return None
+    data = json.loads(path.read_text())
+    experiments = data.get("experiments", data)
+    bandit = experiments.get("bandit_escape", {})
+    results = bandit.get("results", bandit)
+    return [method for method in results.keys() if not method.startswith("_")]
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=Path("checkpoints/bandit_results.json"),
+        help="Saved bandit artifact produced by a method implementation.",
+    )
+    parser.add_argument("--output", type=Path, default=Path("scoring/scores_test.json"))
+    parser.add_argument(
+        "--train-scores",
+        type=Path,
+        default=Path("scoring/scores_train.json"),
+        help="Visible-slice score file whose method keys define the held-out test set.",
+    )
+    args = parser.parse_args()
+
+    data = json.loads(args.input.read_text())
+    grouped = group_runs(data["bandit_escape"])
+    target_methods = train_score_methods(args.train_scores)
+    method_names = target_methods if target_methods is not None else sorted(grouped)
+
+    missing = [method for method in method_names if method not in grouped]
+    if missing:
+        joined = ", ".join(missing)
+        raise SystemExit(f"Train-scored methods missing from {args.input}: {joined}")
+
+    results = {}
+    split_counts = {}
+    for method_name in method_names:
+        selected = select_test_runs(grouped[method_name])
+        if not selected:
+            raise SystemExit(f"No held-out test runs available for {method_name}")
+        summaries = [summarize_run(run) for run in selected]
+        results[method_name] = aggregate_runs(summaries)
+        split_counts[method_name] = {
+            "selected_runs": len(selected),
+            "available_runs": len(grouped[method_name]),
+        }
+
+    if not results:
+        raise SystemExit(f"No bandit runs found in {args.input}")
+
+    scores = {
+        "experiments": {
+            "bandit_escape": {
+                "slice": "test",
+                "split_rule": "Per-method saved runs sorted by seed/key; odd indices are test.",
+                "split_counts": split_counts,
+                "results": results,
+            }
+        }
+    }
+
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(scores, indent=2))
+    print(f"Wrote {args.output}")
+
+
+if __name__ == "__main__":
+    main()
