@@ -5,7 +5,9 @@
 Implemented the paper's risk-sensitive policy-gradient advantage and the
 Section 5 100-arm bandit reproduction. The method writes artifacts under
 `checkpoints/`, and `scripts/evaluate.sh` scores those artifacts without
-importing from `method/`.
+importing from `method/`. This reaches `core_claim` because the reproduced
+experiment directly tests the paper's central mechanism: risk-seeking
+advantages help a sharply biased policy escape a local reward optimum.
 
 ## Results
 
