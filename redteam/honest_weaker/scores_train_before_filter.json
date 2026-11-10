@@ -1,0 +1,25 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "slice": "train",
+      "split_rule": "Per-method saved runs sorted by seed/key; even indices are train.",
+      "split_counts": {
+        "rs_grpo_beta4": {
+          "selected_runs": 5,
+          "available_runs": 10
+        }
+      },
+      "results": {
+        "rs_grpo_beta4": {
+          "expected_reward": 0.5977019277511688,
+          "mean_reward_last_1000": 0.597701146332611,
+          "optimal_action_probability": 8.406637452875384e-05,
+          "global_peak_probability": 0.00041134829213860835,
+          "local_action_probability": 0.9747157378773437,
+          "local_peak_probability": 0.9946002993109678,
+          "global_peak_success_rate": 0.0
+        }
+      }
+    }
+  }
+}

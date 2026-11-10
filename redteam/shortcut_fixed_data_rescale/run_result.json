@@ -1,0 +1,38 @@
+{
+  "case": "shortcut_fixed_data_rescale",
+  "commands": [
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "-m",
+        "method.rs_grpo_bandit"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_train.sh"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_test.sh"
+      ],
+      "returncode": 0
+    }
+  ],
+  "test_argv": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "method_returncode": 0,
+  "train_returncode": 0,
+  "test_before_hash": null,
+  "test_returncode": 0,
+  "test_after_hash": "fe604450c117992bdab3402e852640cf19507aecb4fb64b63caee383cada9388",
+  "test_output_changed": true,
+  "elapsed_seconds": 0.46566483799688285
+}

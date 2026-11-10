@@ -1,0 +1,38 @@
+{
+  "case": "shortcut_forged_summaries",
+  "commands": [
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "-m",
+        "method.rs_grpo_bandit"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_train.sh"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_test.sh"
+      ],
+      "returncode": 0
+    }
+  ],
+  "test_argv": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "method_returncode": 0,
+  "train_returncode": 0,
+  "test_before_hash": null,
+  "test_returncode": 0,
+  "test_after_hash": "af747c50f5e8b452511af2d582e3bb37e17fec9683ac4bdffc7e69aaf5da1a2f",
+  "test_output_changed": true,
+  "elapsed_seconds": 0.3292490189996897
+}

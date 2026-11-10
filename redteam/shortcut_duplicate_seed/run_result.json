@@ -1,0 +1,38 @@
+{
+  "case": "shortcut_duplicate_seed",
+  "commands": [
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "-m",
+        "method.rs_grpo_bandit"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_train.sh"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_test.sh"
+      ],
+      "returncode": 0
+    }
+  ],
+  "test_argv": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "method_returncode": 0,
+  "train_returncode": 0,
+  "test_before_hash": null,
+  "test_returncode": 0,
+  "test_after_hash": "6e5395a46e8efb3f0b8c2cfc2393881e82736764e13f9e39c123e32c630e226d",
+  "test_output_changed": true,
+  "elapsed_seconds": 0.33691772599559044
+}

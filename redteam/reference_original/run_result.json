@@ -1,0 +1,38 @@
+{
+  "case": "reference_original",
+  "commands": [
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "-m",
+        "method.rs_grpo_bandit"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_train.sh"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_test.sh"
+      ],
+      "returncode": 0
+    }
+  ],
+  "test_argv": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "method_returncode": 0,
+  "train_returncode": 0,
+  "test_before_hash": null,
+  "test_returncode": 0,
+  "test_after_hash": "7f55f0d5c6095ac4063392b16e96c83604188e84491031989add9496d8aa2b1c",
+  "test_output_changed": true,
+  "elapsed_seconds": 1.0421653730008984
+}
