@@ -11,12 +11,12 @@
       },
       "results": {
         "rs_grpo_beta4": {
-          "expected_reward": NaN,
-          "mean_reward_last_1000": 1000000.0,
-          "optimal_action_probability": 1000000.0,
-          "global_peak_probability": 1000000.0,
-          "local_action_probability": 0.0,
-          "local_peak_probability": 0.0,
+          "expected_reward": 0.275463950413936,
+          "mean_reward_last_1000": 0.2754639504139359,
+          "optimal_action_probability": 0.01,
+          "global_peak_probability": 0.05,
+          "local_action_probability": 0.01,
+          "local_peak_probability": 0.10999999999999999,
           "global_peak_success_rate": 0.0
         }
       }

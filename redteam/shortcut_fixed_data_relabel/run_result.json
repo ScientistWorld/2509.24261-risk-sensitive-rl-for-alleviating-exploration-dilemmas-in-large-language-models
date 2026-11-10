@@ -1,0 +1,37 @@
+{
+  "case": "shortcut_fixed_data_relabel",
+  "commands": [
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "method/rs_grpo_bandit.py"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_train.sh"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "scripts/evaluate_test.sh"
+      ],
+      "returncode": 0
+    }
+  ],
+  "test_argv": [
+    "bash",
+    "scripts/evaluate_test.sh"
+  ],
+  "method_returncode": 0,
+  "train_returncode": 0,
+  "test_before_hash": null,
+  "test_returncode": 0,
+  "test_after_hash": "87ef61fc88a6779f059eb2bce48079a70d33f49f18ab5fb97f143124593ce521",
+  "test_output_changed": true,
+  "elapsed_seconds": 0.4508927329952712
+}

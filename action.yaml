@@ -1,4 +1,4 @@
 action: submit
 gpus: 0
 test: false
-notes: "Bundled gym audit: three ten-seed reference reruns, equal-budget stronger/weaker methods, and 17 shortcut/control trials; results under redteam/."
+notes: "Rerun bundled audit with source-script wrappers to eliminate bytecode cache reuse, match reference CLI beta type, and test a task-failing policy against editable ground truth."

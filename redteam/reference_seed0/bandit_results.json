@@ -2,7 +2,7 @@
   "bandit_escape": {
     "beta_4_seed_0": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -226,7 +226,7 @@
     },
     "beta_4_seed_1": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -450,7 +450,7 @@
     },
     "beta_4_seed_2": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -674,7 +674,7 @@
     },
     "beta_4_seed_3": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -898,7 +898,7 @@
     },
     "beta_4_seed_4": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -1122,7 +1122,7 @@
     },
     "beta_4_seed_5": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -1346,7 +1346,7 @@
     },
     "beta_4_seed_6": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -1570,7 +1570,7 @@
     },
     "beta_4_seed_7": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -1794,7 +1794,7 @@
     },
     "beta_4_seed_8": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,
@@ -2018,7 +2018,7 @@
     },
     "beta_4_seed_9": {
       "config": {
-        "beta": 4,
+        "beta": 4.0,
         "steps": 120000,
         "batch_size": 16,
         "learning_rate": 0.1,

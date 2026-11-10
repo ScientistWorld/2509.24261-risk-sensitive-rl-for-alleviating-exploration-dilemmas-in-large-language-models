@@ -4,8 +4,7 @@
     {
       "argv": [
         "/usr/local/bin/python3",
-        "-m",
-        "method.rs_grpo_bandit"
+        "method/rs_grpo_bandit.py"
       ],
       "returncode": 0
     },
@@ -34,5 +33,5 @@
   "test_returncode": 0,
   "test_after_hash": "58e1cc635d71fbfee1571a4529aa3603781a095ab6d84b8f3325ff5ba3002534",
   "test_output_changed": true,
-  "elapsed_seconds": 32.45248913999967
+  "elapsed_seconds": 33.62722216700058
 }
