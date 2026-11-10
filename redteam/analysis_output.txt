@@ -1,0 +1,38 @@
+REFERENCE {'expected_reward': 0.9898865398521846, 'mean_reward_last_1000': 0.9892490332502175, 'optimal_action_probability': 0.7889412403453904, 'global_peak_probability': 0.9886463377254502, 'local_action_probability': 0.0015081419341749992, 'local_peak_probability': 0.006542764585739683, 'global_peak_success_rate': 1.0}
+
+COHORT quality n 9 seed spread 0.24745557464375462
+reference_original grpo_beta0 -8.939185253
+reference_original rs_grpo_beta2 -8.930251034
+reference_original rs_grpo_beta4 0.0
+reference_original rs_grpo_beta8 -0.537454736
+reference_seed0 rs_grpo_beta4 -0.245390229
+reference_seed10 rs_grpo_beta4 -0.235310521
+reference_seed20 rs_grpo_beta4 0.002065346
+honest_stronger rs_grpo_beta4 0.344671739
+honest_weaker rs_grpo_beta4 -8.939185253
+
+COHORT all_finite_successful n 22 seed spread 0.19486533423597438
+reference_original grpo_beta0 -6.146551009
+reference_original rs_grpo_beta2 -6.125670459
+reference_original rs_grpo_beta4 0.0
+reference_original rs_grpo_beta8 -0.409955165
+reference_seed0 rs_grpo_beta4 -0.196018843
+reference_seed10 rs_grpo_beta4 -0.195526964
+reference_seed20 rs_grpo_beta4 -0.001153508
+honest_stronger rs_grpo_beta4 0.245032689
+honest_weaker rs_grpo_beta4 -6.146551009
+shortcut_visible_argmax rs_grpo_beta4 0.245041486
+shortcut_bruteforce rs_grpo_beta4 0.245041486
+shortcut_forged_tail rs_grpo_beta4 1.739252713
+shortcut_failing_forged_tail rs_grpo_beta4 -2.516839487
+shortcut_forged_summaries rs_grpo_beta4 -6.176225666
+shortcut_fixed_data_rescale rs_grpo_beta4 4.688012195
+shortcut_duplicate_seed rs_grpo_beta4 0.205778915
+shortcut_stale_checkpoint rs_grpo_beta4 0.0
+shortcut_train_filter rs_grpo_beta4 0.0
+shortcut_constant_uniform rs_grpo_beta4 -4.209747531
+shortcut_baseline_replace rs_grpo_beta4 0.0
+shortcut_direct_scorefile rs_grpo_beta4 -6.176225666
+shortcut_fixed_data_relabel rs_grpo_beta4 0.245041486
+
+METRIC SPREAD {'expected_reward': 0.0034785706646394132, 'mean_reward_last_1000': 0.005511714902453724, 'optimal_action_probability': 0.19415567306837211, 'global_peak_probability': 0.0002673868925456846, 'global_peak_success_rate': 0.0, 'local_action_probability': 0.00016994465533600226, 'local_peak_probability': 0.0003575044966322898}

@@ -1,0 +1,7 @@
+{
+  "case": "shortcut_empty_artifact",
+  "test_returncode": 1,
+  "scores_file_exists": false,
+  "output_changed": false,
+  "error": "Train-scored methods missing from checkpoints/bandit_results.json: grpo_beta0, rs_grpo_beta2, rs_grpo_beta4, rs_grpo_beta8"
+}

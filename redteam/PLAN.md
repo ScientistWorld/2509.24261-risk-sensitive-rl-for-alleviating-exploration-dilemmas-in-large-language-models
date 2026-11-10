@@ -5,9 +5,11 @@ harness records failures and keeps any surviving score file; it does not turn
 failures into successes. It restores the original non-audit files after each
 case. Candidate code never reads hidden evaluators, hidden seeds, hidden scores,
 or the paper. Output-only shortcuts reuse the original method's trained JSON,
-as authorized by the audit. reference_seed0 independently regenerates that JSON's
-beta4 component. To recreate the reusable artifact from an empty workspace:
-PYTHONPATH=. python3 redteam/support/reference_method.py --betas 0 2 4 8 --seeds 0 1 2 3 4 5 6 7 8 9 --output redteam/reference_original/artifact.json
+as authorized by the audit. reference_seed0 independently reruns the current
+beta4 implementation. Its scores do not match the saved reference artifact;
+REDTEAM.md documents this unresolved provenance issue. To independently train
+a new artifact from an empty workspace (do not overwrite the saved evidence):
+PYTHONPATH=. python3 redteam/support/reference_method.py --betas 0 2 4 8 --seeds 0 1 2 3 4 5 6 7 8 9 --output checkpoints/new_reference.json
 The support/reference.json and original_scores_test.json are auditor comparison
 inputs only, not candidate inputs. No candidate changes the test code, Python
 environment, or running evaluator process.

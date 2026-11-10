@@ -1,0 +1,7 @@
+{
+  "case": "shortcut_failed_stale",
+  "test_returncode": 1,
+  "scores_file_exists": true,
+  "output_changed": false,
+  "error": "KeyError: 'mean_reward_last_1000'"
+}

@@ -1,0 +1,16 @@
+{
+  "case_count": 24,
+  "successful_test_cases": 20,
+  "expected_test_failures": [
+    "shortcut_empty_artifact",
+    "shortcut_empty_policy",
+    "shortcut_failed_stale",
+    "shortcut_null_tail"
+  ],
+  "tie_shortcuts_verified": 3,
+  "scientific_paths_restored_to": "c42a170",
+  "original_checkpoint_sha256": "2f7ce0d6b65b57be630d497aae6c34cd247731059e97ff82936afa03328702ae",
+  "stronger_dominates_reference": true,
+  "weaker_is_worse_on_all_metrics": true,
+  "genuine_reward_gain_exceeds_seed_spread": true
+}

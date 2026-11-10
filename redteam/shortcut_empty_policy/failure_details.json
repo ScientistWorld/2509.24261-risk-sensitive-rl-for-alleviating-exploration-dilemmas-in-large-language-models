@@ -1,0 +1,7 @@
+{
+  "case": "shortcut_empty_policy",
+  "test_returncode": 1,
+  "scores_file_exists": false,
+  "output_changed": false,
+  "error": "ValueError: beta_4_seed_0: final_policy must contain 100 probabilities"
+}

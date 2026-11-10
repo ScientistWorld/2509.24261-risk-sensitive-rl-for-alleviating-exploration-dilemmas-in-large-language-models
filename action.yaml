@@ -1,4 +1,2 @@
-action: submit
-gpus: 0
-test: false
-notes: "Rerun bundled audit with source-script wrappers to eliminate bytecode cache reuse, match reference CLI beta type, and test a task-failing policy against editable ground truth."
+action: done
+notes: "Audit complete: genuine gains exceed seed noise; six shortcuts beat and three tie the reference. Evidence and restoration documented in REDTEAM.md."
