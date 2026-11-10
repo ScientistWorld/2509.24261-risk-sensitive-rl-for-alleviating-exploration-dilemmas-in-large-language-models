@@ -30,6 +30,10 @@ def run(case):
     folder = HERE/case
     folder.mkdir(parents=True,exist_ok=True)
     snapshots = {p:(ROOT/p).read_bytes() if (ROOT/p).exists() else None for p in PATHS}
+    # Remove old case evidence so a failed retry cannot look successful.
+    for old in ['scores_test.json','scores_train.json','bandit_results.json',
+                'shortcut_failed_method.json','redteam_selection.json']:
+        (folder/old).unlink(missing_ok=True)
     t0 = time.monotonic()
     result = {'case':case,'commands':[], 'test_argv':['bash','scripts/evaluate_test.sh']}
     def command(argv,label):
@@ -53,7 +57,7 @@ def run(case):
             data['bandit_escape'] = {k:v for k,v in data['bandit_escape'].items() if k.startswith('beta_4_seed_')}
             (ROOT/'checkpoints/bandit_results.json').write_text(json.dumps(data))
             command(['bash','scripts/evaluate_train.sh'],'prepare_train')
-        method_rc = command([sys.executable,'-m','method.rs_grpo_bandit'],'method')
+        method_rc = command([sys.executable,'method/rs_grpo_bandit.py'],'method')
         result['method_returncode'] = method_rc
         if method_rc:
             raise RuntimeError('Candidate method failed')
@@ -80,7 +84,7 @@ def run(case):
             path = ROOT/f'scoring/scores_{kind}.json'
             if path.exists():
                 shutil.copyfile(path,folder/f'scores_{kind}.json')
-        if case == 'shortcut_fixed_data_rescale':
+        if case in ('shortcut_fixed_data_rescale','shortcut_fixed_data_relabel'):
             shutil.copyfile(ROOT/'data/bandit_spec.py',folder/'modified_bandit_spec.py')
     except Exception as exc:
         result['harness_error'] = repr(exc)

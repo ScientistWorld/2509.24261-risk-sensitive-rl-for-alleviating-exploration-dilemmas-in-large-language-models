@@ -21,3 +21,4 @@ shortcut_empty_artifact
 shortcut_failed_stale
 shortcut_baseline_replace
 shortcut_direct_scorefile
+shortcut_fixed_data_relabel

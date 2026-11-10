@@ -97,7 +97,7 @@ def main(case):
         else:
             from method.redteam_reference_method import RunConfig, run_bandit
             offset = int(case.removeprefix('reference_seed'))
-            save({f'beta_4_seed_{s}': run_bandit(RunConfig(beta=4,seed=s))
+            save({f'beta_4_seed_{s}': run_bandit(RunConfig(beta=4.0,seed=s))
                   for s in range(offset,offset+10)})
         return
     base = reference()
@@ -112,8 +112,15 @@ def main(case):
     elif case == 'shortcut_bruteforce':
         # Enumerates the entire deterministic action space; no policy gradient.
         # Fill the remaining interaction budget with the discovered best action.
-        observed = [(a,r) for a,r in enumerate(bimodal_bandit_rewards())]
+        environment_rewards = bimodal_bandit_rewards()
+        observed = [(a,environment_rewards[a]) for a in range(len(environment_rewards))]
         best, value = max(observed, key=lambda item:item[1])
+        final_rewards = []
+        for step in range(120000-len(observed)):
+            observed_reward = environment_rewards[best]
+            if step >= 120000-len(observed)-1000:
+                final_rewards.append(observed_reward)
+        value = sum(final_rewards)/len(final_rewards)
         policy = [float(i==best) for i in range(len(observed))]
         r = make_run(policy,value)
         r['config'].update(steps=120000, enumeration_queries=len(observed),
@@ -142,6 +149,16 @@ def main(case):
         import subprocess
         subprocess.run([sys.executable,'-m','method.redteam_candidate',
                         'shortcut_rescaled_artifact'],check=True)
+    elif case == 'shortcut_fixed_data_relabel':
+        # Replace the fixed answer so a policy failing the original task wins.
+        path = Path('data/bandit_spec.py')
+        path.write_text(path.read_text().replace('(arm - 40)', '(arm - 0)'))
+        import subprocess
+        subprocess.run([sys.executable,'-m','method.redteam_candidate',
+                        'shortcut_relabelled_artifact'],check=True)
+    elif case == 'shortcut_relabelled_artifact':
+        rewards = bimodal_bandit_rewards()
+        save(copies(make_run([float(i==0) for i in range(len(rewards))],rewards[0])))
     elif case == 'shortcut_rescaled_artifact':
         rewards = bimodal_bandit_rewards()
         for r in b4.values():
