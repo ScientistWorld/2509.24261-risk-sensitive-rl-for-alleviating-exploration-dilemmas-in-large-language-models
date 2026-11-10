@@ -1,2 +1,8 @@
-action: done
-notes: "Audit complete: genuine gains exceed seed noise; six shortcuts beat and three tie the reference. Evidence and restoration documented in REDTEAM.md."
+# Once you set action to 'submit' or 'done', STOP immediately.
+# Do NOT sleep, poll, or wait for jobs. The system reads this file
+# only after your turn ends.
+action: pending
+gpus: 0
+test: false
+milestone: core_claim_plus
+notes: ""
