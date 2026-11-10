@@ -1,0 +1,64 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "slice": "test",
+      "split_rule": "Per-method saved runs sorted by seed/key; odd indices are test.",
+      "split_counts": {
+        "grpo_beta0": {
+          "selected_runs": 5,
+          "available_runs": 10
+        },
+        "rs_grpo_beta2": {
+          "selected_runs": 5,
+          "available_runs": 10
+        },
+        "rs_grpo_beta4": {
+          "selected_runs": 5,
+          "available_runs": 10
+        },
+        "rs_grpo_beta8": {
+          "selected_runs": 5,
+          "available_runs": 10
+        }
+      },
+      "results": {
+        "grpo_beta0": {
+          "expected_reward": 0.5977954232649211,
+          "mean_reward_last_1000": 0.597006166070494,
+          "optimal_action_probability": 8.359467499634482e-05,
+          "global_peak_probability": 0.00039860571972728884,
+          "local_action_probability": 0.9755548131043513,
+          "local_peak_probability": 0.994813777248136,
+          "global_peak_success_rate": 0.0
+        },
+        "rs_grpo_beta2": {
+          "expected_reward": 0.5962066332430449,
+          "mean_reward_last_1000": 0.5962342013389726,
+          "optimal_action_probability": 0.00030403104785134687,
+          "global_peak_probability": 0.0012930315787767217,
+          "local_action_probability": 0.9617288943200624,
+          "local_peak_probability": 0.9894521206806633,
+          "global_peak_success_rate": 0.0
+        },
+        "rs_grpo_beta4": {
+          "expected_reward": 0.9898865398521846,
+          "mean_reward_last_1000": 0.9892490332502175,
+          "optimal_action_probability": 0.7889412403453904,
+          "global_peak_probability": 0.9886463377254502,
+          "local_action_probability": 0.0015081419341749992,
+          "local_peak_probability": 0.006542764585739683,
+          "global_peak_success_rate": 1.0
+        },
+        "rs_grpo_beta8": {
+          "expected_reward": 0.9788702288069613,
+          "mean_reward_last_1000": 0.9775147007506882,
+          "optimal_action_probability": 0.3931264217746391,
+          "global_peak_probability": 0.9833999503594729,
+          "local_action_probability": 0.0010375312171943068,
+          "local_peak_probability": 0.007041610031505901,
+          "global_peak_success_rate": 1.0
+        }
+      }
+    }
+  }
+}

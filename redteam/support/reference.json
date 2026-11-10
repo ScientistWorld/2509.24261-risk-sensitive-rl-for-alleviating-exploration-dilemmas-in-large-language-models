@@ -1,0 +1,80 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "description": "Section 5 / Figure 3 100-armed bandit: risk-neutral policy remains near the local optimum while sufficiently risk-seeking policies converge to the global optimum.",
+      "weight": 1.0,
+      "primary_metric": "expected_reward",
+      "metrics": {
+        "expected_reward": {
+          "higher_is_better": true,
+          "coefficient": 1.0,
+          "description": "Final policy probability-weighted reward over all 100 bandit arms."
+        },
+        "mean_reward_last_1000": {
+          "higher_is_better": true,
+          "coefficient": 0.5,
+          "description": "Average sampled reward over the final 1000 interactions, catching policies that look good only in the final distribution."
+        },
+        "optimal_action_probability": {
+          "higher_is_better": true,
+          "coefficient": 0.4,
+          "description": "Final probability assigned to the single globally optimal arm."
+        },
+        "global_peak_probability": {
+          "higher_is_better": true,
+          "coefficient": 0.8,
+          "description": "Final probability assigned to the high-reward global peak region."
+        },
+        "global_peak_success_rate": {
+          "higher_is_better": true,
+          "coefficient": 0.6,
+          "description": "Fraction of independent runs whose final policy reaches the global peak with high expected reward."
+        },
+        "local_action_probability": {
+          "higher_is_better": false,
+          "coefficient": -0.4,
+          "description": "Final probability assigned to the initially favored suboptimal arm."
+        },
+        "local_peak_probability": {
+          "higher_is_better": false,
+          "coefficient": -0.5,
+          "description": "Final probability retained in the local peak neighborhood, catching shortcuts that leave the exact local arm but stay in the local mode."
+        }
+      },
+      "results": {
+        "grpo_beta0": {
+          "type": "baseline",
+          "expected_reward": 0.6,
+          "mean_reward_last_1000": 0.6,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0
+        },
+        "rs_grpo_beta2": {
+          "type": "proposed",
+          "expected_reward": 0.6,
+          "mean_reward_last_1000": 0.6,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0
+        },
+        "rs_grpo_beta4": {
+          "type": "proposed",
+          "expected_reward": 1.0,
+          "mean_reward_last_1000": 1.0,
+          "global_peak_probability": 1.0,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.0
+        },
+        "rs_grpo_beta8": {
+          "type": "proposed",
+          "expected_reward": 1.0,
+          "mean_reward_last_1000": 1.0,
+          "global_peak_probability": 1.0,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.0
+        }
+      }
+    }
+  }
+}
