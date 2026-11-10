@@ -1,23 +1,8 @@
 #!/bin/bash
-# Run a baseline method from the paper.
-#
-# Baselines are simple reference methods the paper compares against. 
-# Implement this only if applicable, i.e. the paper has baselines.
-# You do not need to implement all baselines to begin — 
-# just enough to validate that the evaluation pipeline works 
-# and provide a reference point. You can decide to expand more baselines later.
-# Each baseline must be actually run and scored through evaluate.sh
-# so the numbers are verified, not self-reported.
-# You can decide what this baseline script should do yourself.
-#
-# Usage:
-#   bash scripts/baseline.sh <name>
-
-set -e
-
+# Run the standalone risk-neutral GRPO baseline on the visible slice.
+set -euo pipefail
 cd /home/user
 export PYTHONPATH="/home/user:${PYTHONPATH:-}"
-
-STEPS="${RS_GRPO_STEPS:-120000}"
-python baseline/grpo_bandit.py --steps "$STEPS" --output checkpoints/bandit_baseline.json
-bash scripts/evaluate.sh checkpoints/bandit_baseline.json
+python baseline/grpo_bandit.py --list
+python eval/train/bandit_eval.py --methods grpo_baseline \
+  --output logs/baseline_scores_train.json --details logs/baseline_details_train.json

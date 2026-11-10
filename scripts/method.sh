@@ -1,25 +1,11 @@
 #!/bin/bash
-# Run the paper's proposed method.
-#
-# This script trains/runs the paper's method using code in method/.
-#
-# Usage:
-#   bash scripts/method.sh
-
-set -e
-
+# Run the paper's method (RS-GRPO, beta in {0,2,4,8,16}) on the visible slice.
+# The method is an agent: the evaluator samples from the policy and applies
+# the update, the agent supplies the paper's Eq. 8 advantages.
+set -euo pipefail
 cd /home/user
 export PYTHONPATH="/home/user:${PYTHONPATH:-}"
-
-STEPS="${RS_GRPO_STEPS:-120000}"
-SEEDS="${RS_GRPO_SEEDS:-0 1 2 3 4 5 6 7 8 9}"
-
-python method/rs_grpo_bandit.py \
-  --betas 0 2 4 8 \
-  --steps "$STEPS" \
-  --batch-size 16 \
-  --learning-rate 0.1 \
-  --seeds $SEEDS \
-  --output checkpoints/bandit_results.json
-
-bash scripts/evaluate.sh checkpoints/bandit_results.json
+python method/rs_grpo_bandit.py --list
+python eval/train/bandit_eval.py \
+  --methods grpo_beta0,rs_grpo_beta2,rs_grpo_beta4,rs_grpo_beta8,rs_grpo_beta16 \
+  --output logs/method_scores_train.json --details logs/method_details_train.json

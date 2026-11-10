@@ -1,16 +1,9 @@
 #!/bin/bash
-# Evaluate the held-out test slice using the same artifact contract as evaluate.sh.
-
-set -e
-
+# Score every agent on disk (method/*.py and baseline/*.py whose names do not
+# start with "_") on the hidden slice and write scoring/scores_test.json.
+# Takes no arguments. Same agent interface as the visible slice.
+set -euo pipefail
 cd /home/user
 export PYTHONPATH="/home/user:${PYTHONPATH:-}"
-
 mkdir -p scoring
-
-INPUT="${1:-checkpoints/bandit_results.json}"
-
-python eval/test/evaluate_bandit_slice.py \
-  --input "$INPUT" \
-  --output scoring/scores_test.json \
-  --train-scores scoring/scores_train.json
+python eval/test/bandit_eval.py --output scoring/scores_test.json

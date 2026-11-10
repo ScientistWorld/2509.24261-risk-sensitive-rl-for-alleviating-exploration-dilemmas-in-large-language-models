@@ -12,13 +12,13 @@
 # Estimated total download size: 0 GB
 # Estimated disk usage after extraction: 0 GB
 #
-# This reproduction uses a procedural benchmark, so there are no remote
-# resources to fetch.
+# This environment has no external datasets or model weights: every bandit
+# instance is generated procedurally by data/bandit_instances.py (visible
+# copy) and by the evaluators in eval/ at scoring time.
 
 set -e
 
 cd /home/user
 
-# The runnable core reproduction uses the paper's procedural bandit setting.
-# No external datasets or pretrained weights are required.
+# Nothing to fetch; keep the gitignored download folder present.
 mkdir -p data/downloads

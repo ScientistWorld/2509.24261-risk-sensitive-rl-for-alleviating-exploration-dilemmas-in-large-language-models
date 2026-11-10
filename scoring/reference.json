@@ -1,47 +1,63 @@
 {
+  "_reference_method": "rs_grpo_beta8",
+  "_note": "Every number in scores_*.json is computed by eval/ from the agent's sampled interactions: the evaluator samples all actions, applies the fixed softmax policy-gradient step (lr 0.1, N = 16, 7500 batches) to the advantages an agent returns, and scores the final policy on hidden instances. rs_grpo_beta8 (the paper's RS-GRPO setting for its pass@k experiments, Fig. 4, and the largest beta of its ablation grid) is the reference every future method is ranked against; the other beta values are the paper's ablation. Coefficients are magnitudes: each metric's improvement is taken in its higher_is_better direction.",
   "experiments": {
     "bandit_escape": {
-      "description": "Section 5 / Figure 3 100-armed bandit: risk-neutral policy remains near the local optimum while sufficiently risk-seeking policies converge to the global optimum.",
-      "weight": 1.0,
+      "description": "Section 5 / Figure 3 bandit at the paper's scale: the paper's exact 100-arm bimodal reward landscape (global peak 1.0, local peak 0.6) and initial policy sharply peaked on the local peak, with arm labels permuted per hidden instance. Risk-neutral updates stay at the local peak; sufficiently risk-seeking updates (beta >= 4) reach the global peak.",
+      "weight": 0.4,
       "primary_metric": "expected_reward",
       "metrics": {
         "expected_reward": {
           "higher_is_better": true,
           "coefficient": 1.0,
-          "description": "Final policy probability-weighted reward over all 100 bandit arms."
+          "description": "Reward of the final policy averaged over all arms (pass@1 of the final policy)."
         },
         "mean_reward_last_1000": {
           "higher_is_better": true,
           "coefficient": 0.5,
-          "description": "Average sampled reward over the final 1000 interactions, catching policies that look good only in the final distribution."
+          "description": "Mean reward of the last 1000 actions the evaluator sampled (end point of the paper's Fig. 3 learning curve)."
+        },
+        "online_mean_reward": {
+          "higher_is_better": true,
+          "coefficient": 0.5,
+          "description": "Mean reward of all 120,000 actions the evaluator sampled during learning (area under the learning curve: speed of escape and convergence)."
         },
         "optimal_action_probability": {
           "higher_is_better": true,
           "coefficient": 0.4,
-          "description": "Final probability assigned to the single globally optimal arm."
+          "description": "Final probability of the single best arm."
         },
         "global_peak_probability": {
           "higher_is_better": true,
           "coefficient": 0.8,
-          "description": "Final probability assigned to the high-reward global peak region."
+          "description": "Final probability of the arms whose reward is at least 0.9."
         },
         "global_peak_success_rate": {
           "higher_is_better": true,
           "coefficient": 0.6,
-          "description": "Fraction of independent runs whose final policy reaches the global peak with high expected reward."
+          "description": "Fraction of hidden episodes whose final policy puts at least half its mass on the global peak."
         },
         "local_action_probability": {
           "higher_is_better": false,
-          "coefficient": -0.4,
-          "description": "Final probability assigned to the initially favored suboptimal arm."
+          "coefficient": 0.4,
+          "description": "Final probability of the centre of the initially favoured local peak."
         },
         "local_peak_probability": {
           "higher_is_better": false,
-          "coefficient": -0.5,
-          "description": "Final probability retained in the local peak neighborhood, catching shortcuts that leave the exact local arm but stay in the local mode."
+          "coefficient": 0.5,
+          "description": "Final probability retained in the local peak neighbourhood (offsets |d| <= 5)."
         }
       },
+      "_paper_reported_note": "The paper reports the learning curves of Fig. 3 for beta in {0, 2, 4, 8} (the released bandit script also runs 16, 32, 64): beta = 0 and beta < 4 converge to the local reward 0.6, beta >= 4 to the global reward 1.0. Values below are those curve end points; probabilities are the corresponding converged policies. The gym uses 120,000 interactions (released script: 400,000).",
       "results": {
+        "grpo_baseline": {
+          "type": "baseline",
+          "expected_reward": 0.6,
+          "mean_reward_last_1000": 0.6,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0
+        },
         "grpo_beta0": {
           "type": "baseline",
           "expected_reward": 0.6,
@@ -73,7 +89,77 @@
           "global_peak_probability": 1.0,
           "global_peak_success_rate": 1.0,
           "local_action_probability": 0.0
+        },
+        "rs_grpo_beta16": {
+          "type": "proposed",
+          "expected_reward": 1.0,
+          "mean_reward_last_1000": 1.0,
+          "global_peak_probability": 1.0,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.0
         }
+      }
+    },
+    "bandit_escape_scaled": {
+      "description": "Where the paper's method falls short (Sec. 6.2: the optimum is prohibitively unlikely under the initial policy). The same two reward peaks inside 2^18 arms: the initial policy keeps 45-65% of its mass on the local peak, puts an instance-dependent 1-15% (log-uniform) on the 21-arm global peak, hides it among similarly likely low-reward decoys, and spreads the rest over a long tail. Enumerating arms is impossible within the 120,000-interaction budget.",
+      "weight": 0.6,
+      "primary_metric": "expected_reward",
+      "metrics": {
+        "expected_reward": {
+          "higher_is_better": true,
+          "coefficient": 1.0,
+          "description": "Reward of the final policy averaged over all arms (pass@1 of the final policy)."
+        },
+        "mean_reward_last_1000": {
+          "higher_is_better": true,
+          "coefficient": 0.5,
+          "description": "Mean reward of the last 1000 actions the evaluator sampled."
+        },
+        "online_mean_reward": {
+          "higher_is_better": true,
+          "coefficient": 0.5,
+          "description": "Mean reward of all 120,000 actions the evaluator sampled during learning."
+        },
+        "optimal_action_probability": {
+          "higher_is_better": true,
+          "coefficient": 0.4,
+          "description": "Final probability of the single best arm."
+        },
+        "global_peak_probability": {
+          "higher_is_better": true,
+          "coefficient": 0.8,
+          "description": "Final probability of the arms whose reward is at least 0.9."
+        },
+        "global_peak_success_rate": {
+          "higher_is_better": true,
+          "coefficient": 0.6,
+          "description": "Fraction of hidden episodes whose final policy puts at least half its mass on the global peak."
+        },
+        "local_action_probability": {
+          "higher_is_better": false,
+          "coefficient": 0.4,
+          "description": "Final probability of the centre of the initially favoured local peak."
+        },
+        "local_peak_probability": {
+          "higher_is_better": false,
+          "coefficient": 0.5,
+          "description": "Final probability retained in the local peak neighbourhood (offsets |d| <= 5)."
+        }
+      },
+      "_note": "The paper reports no numbers for this scaled setting. Its Section 5 numbers (local 0.6 for risk-neutral, global 1.0 for beta >= 4) are kept under _paper_reported_section5 for context only. 'results' holds this gym's reference reproduction on the visible slice (scripts/evaluate_train.sh), recorded so the gym's own numbers are documented; it is not a target.",
+      "_paper_reported_section5": {
+        "grpo_beta0": {"expected_reward": 0.6},
+        "rs_grpo_beta2": {"expected_reward": 0.6},
+        "rs_grpo_beta4": {"expected_reward": 1.0},
+        "rs_grpo_beta8": {"expected_reward": 1.0}
+      },
+      "results": {
+        "grpo_baseline": {"type": "baseline"},
+        "grpo_beta0": {"type": "baseline"},
+        "rs_grpo_beta2": {"type": "proposed", "expected_reward": 0.6},
+        "rs_grpo_beta4": {"type": "proposed", "expected_reward": 0.6},
+        "rs_grpo_beta8": {"type": "proposed", "expected_reward": 0.6},
+        "rs_grpo_beta16": {"type": "proposed", "expected_reward": 0.6}
       }
     }
   }

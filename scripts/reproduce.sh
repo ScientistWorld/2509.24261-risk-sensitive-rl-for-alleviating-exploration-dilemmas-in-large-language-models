@@ -1,22 +1,13 @@
 #!/bin/bash
-# Reproduce the paper's results end-to-end.
-#
-# This script runs inside the compute container and should call
-# scripts/baseline.sh and scripts/method.sh to run baselines and
-# the paper's method, each of which calls scripts/evaluate.sh.
-#
-# Assumes:
-#   - Container is built (environment/container.sif)
-#   - Data and models are downloaded (via scripts/download.sh)
-#   - Working directory is /home/user
-#
-# This is the "gold standard" reproduction — 
-# You do not need to run this, but keep this in good shape
-# so other agents can easily run a full loop of reproduction and get the paper's numbers.
-
-set -e
-
+# Reproduce the gym's reference numbers end to end (CPU only, ~40 min on 1 core).
+# Every agent on disk (paper's method variants and the GRPO baseline) is run
+# by the evaluators on the visible and, when present, the hidden slice.
+set -euo pipefail
 cd /home/user
 export PYTHONPATH="/home/user:${PYTHONPATH:-}"
-
-bash scripts/method.sh
+bash scripts/evaluate_train.sh
+# scoring/scores.json is the visible-slice result (what scripts/evaluate.sh writes).
+cp scoring/scores_train.json scoring/scores.json
+if [ -f eval/test/bandit_eval.py ]; then
+  bash scripts/evaluate_test.sh
+fi

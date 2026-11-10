@@ -1,13 +1,10 @@
 #!/bin/bash
-# Evaluate the visible train slice using the same artifact contract as evaluate.sh.
-
-set -e
-
+# Score every agent on disk (method/*.py and baseline/*.py whose names do not
+# start with "_") on the visible slice and write scoring/scores_train.json.
+# Takes no arguments. The evaluator runs each agent through the protocol in
+# data/agent_protocol.py; it never trusts a number written by a method.
+set -euo pipefail
 cd /home/user
 export PYTHONPATH="/home/user:${PYTHONPATH:-}"
-
 mkdir -p scoring
-
-INPUT="${1:-checkpoints/bandit_results.json}"
-
-python eval/train/evaluate_bandit_slice.py --input "$INPUT" --output scoring/scores_train.json
+python eval/train/bandit_eval.py --output scoring/scores_train.json
