@@ -1,8 +1,8 @@
 # Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends.
-action: pending
+action: submit
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: ""
+notes: "Hardened gym check: reference set (GRPO baseline, RS-GRPO beta 0/2/4/8/16) through new evaluator-run visible + hidden slices, then audit rerun of stronger variant and shortcuts through the hidden test (CPU, ~1.5h)."

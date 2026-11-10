@@ -1,0 +1,84 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "_slice": "train",
+      "_episodes": 24,
+      "results": {
+        "honest_stronger_aspiration": {
+          "expected_reward": 0.998680511988333,
+          "mean_reward_last_1000": 0.9983294312592862,
+          "online_mean_reward": 0.8938175948624473,
+          "optimal_action_probability": 0.9573479150234592,
+          "global_peak_probability": 0.9991425132664199,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 3.512903398492683e-05,
+          "local_peak_probability": 0.0003125027944437704
+        },
+        "shortcut_enumerate": {
+          "expected_reward": 0.9998862348780211,
+          "mean_reward_last_1000": 0.9997739735381228,
+          "online_mean_reward": 0.806312425705492,
+          "optimal_action_probability": 0.9998349496575902,
+          "global_peak_probability": 0.9998396430773169,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 4.099732090297294e-06,
+          "local_peak_probability": 4.290364053326231e-05
+        },
+        "shortcut_train_lookup": {
+          "expected_reward": 0.9999248364943053,
+          "mean_reward_last_1000": 0.9998225451650979,
+          "online_mean_reward": 0.9825727926915073,
+          "optimal_action_probability": 0.9998856564834152,
+          "global_peak_probability": 0.9998882058596803,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 4.302411903528908e-06,
+          "local_peak_probability": 4.159511821339459e-05
+        }
+      }
+    },
+    "bandit_escape_scaled": {
+      "_slice": "train",
+      "_episodes": 48,
+      "results": {
+        "honest_stronger_aspiration": {
+          "expected_reward": 0.915746338176764,
+          "mean_reward_last_1000": 0.9112862775799151,
+          "online_mean_reward": 0.65538591464578,
+          "optimal_action_probability": 0.3324169296240929,
+          "global_peak_probability": 0.8470298407815032,
+          "global_peak_success_rate": 0.8541666666666666,
+          "local_action_probability": 0.08920357965010937,
+          "local_peak_probability": 0.12606231379679683
+        },
+        "shortcut_enumerate": {
+          "expected_reward": 0.9997758858024528,
+          "mean_reward_last_1000": 0.99975625,
+          "online_mean_reward": 0.5489212063468616,
+          "optimal_action_probability": 0.9997478124938355,
+          "global_peak_probability": 0.9997484534243172,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 2.04669617178802e-07,
+          "local_peak_probability": 2.3668528709515438e-06
+        },
+        "shortcut_train_lookup": {
+          "expected_reward": 0.9999054815405781,
+          "mean_reward_last_1000": 0.99992098106876,
+          "online_mean_reward": 0.9274518840791605,
+          "optimal_action_probability": 0.9998686025868259,
+          "global_peak_probability": 0.9998698405742313,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 4.380490443270093e-06,
+          "local_peak_probability": 4.1569759823646304e-05
+        }
+      }
+    }
+  },
+  "_failures": {},
+  "_protocol": {
+    "num_batches": 7500,
+    "batch_size": 16,
+    "learning_rate": 0.1,
+    "advantage_cap": 8.0,
+    "partial_run": true
+  }
+}
