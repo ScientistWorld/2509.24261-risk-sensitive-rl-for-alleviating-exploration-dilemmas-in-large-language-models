@@ -24,6 +24,15 @@ pass@32 with comparable pass@1.
 - The recommended comparison setting uses `beta=2` for pass@k baselines and
   `beta=8` in the broader pass@k curves.
 
+## This Gym
+
+The gym reproduces the paper's Section 5 bandit (100 arms, hidden arm
+permutations) and extends it to a 2^18-arm version where the global optimum is
+much less likely under the initial policy (the regime in which the paper
+reports its method can stay at a local optimum). Methods are advantage rules
+run by the evaluator on hidden instances. The LLM pass@k experiments are out
+of scope (CPU-only budget).
+
 ---
 
 # Problem Definition
@@ -40,11 +49,21 @@ For reasoning models, improving only average one-sample accuracy can reduce
 solution diversity and hurt best-of-k performance. A good optimizer should
 discover high-reward alternatives that the initial policy rarely samples.
 
+## Setting Used Here
+
+A many-armed bandit stands in for a generative policy. The initial softmax
+policy concentrates on a good-but-suboptimal mode; the best actions are rare
+under it. The policy is updated by a fixed policy-gradient step from groups
+of sampled actions, and the question is how each sample in a group should be
+weighted (its advantage) given only the group's rewards.
+
 ## Success Criteria
 
-A successful system should move probability toward globally high-reward actions
-from a biased, sharply peaked initial policy. It should improve best-achievable
-or expected reward while avoiding collapse onto a known suboptimal local mode.
+A successful system moves probability toward globally high-reward actions
+from a biased, sharply peaked initial policy, including when those actions
+are very unlikely at the start. It should improve best-achievable and
+expected reward, avoid collapsing onto the known suboptimal mode, and do so
+within the fixed interaction budget.
 
 ---
 
@@ -74,39 +93,92 @@ maintaining or improving pass@1. A supporting claim is shown in a 100-armed
 bandit: risk-neutral policy gradient remains trapped near a local peak, while
 sufficiently risk-seeking updates move to the global peak.
 
+## In This Gym
+
+`method/rs_grpo_bandit.py` implements Eq. 8 as an agent (see
+`data/agent_protocol.py`) with beta in {0, 2, 4, 8, 16}: the paper's ablation
+grid plus the released bandit script's 16. The evaluator samples groups of
+N = 16 from the softmax policy and applies the paper's policy-gradient step
+(learning rate 0.1) with the returned advantages. Eq. 8 advantages sum to
+zero within a group, so the evaluator's centring leaves them unchanged.
+`rs_grpo_beta8` (the paper's RS-GRPO setting in its pass@k figure) is the
+reference every new method is ranked against. `baseline/grpo_bandit.py` is
+the standalone risk-neutral GRPO baseline.
+
 ---
 
 # Evaluation
 
-## Metrics
+## Setting
 
-- `expected_reward`: final policy probability-weighted reward over all actions.
-  Higher is better.
-- `mean_reward_last_1000`: average sampled reward over the final 1000
-  interactions. Higher is better.
-- `optimal_action_probability`: final probability assigned to the single best
-  action. Higher is better.
-- `global_peak_probability`: final probability assigned to arms in the global
-  reward peak region. Higher is better.
-- `global_peak_success_rate`: fraction of independent runs that reach the
-  global peak with high expected reward. Higher is better.
-- `local_action_probability`: final probability assigned to the suboptimal
-  initially favored action. Lower is better.
-- `local_peak_probability`: final probability retained in the initially favored
-  local neighborhood. Lower is better.
+A K-armed bandit with deterministic rewards in [0, 1] and a softmax policy
+over the arms. The initial policy is fixed and sharply peaked on a suboptimal
+"local" peak (reward 0.6); a "global" peak (reward 1.0) carries little initial
+probability. Each episode is 7,500 groups of N = 16 actions (120,000
+interactions).
 
-## Baselines and Targets
+The evaluator owns everything outside the method:
 
-The provided reference baseline is expected to remain near the suboptimal peak
-in the 100-arm benchmark, with final reward around 0.6. Successful exploratory
-optimization should reach the global peak, with final reward near 1.0 and high
-probability on the optimal action.
+1. It samples each group of 16 actions from the current policy.
+2. It sends the method the 16 rewards of the group (not which arms were
+   played) and receives 16 advantages.
+3. It checks the advantages (finite, |A| <= 8), centres them within the
+   group, and applies the fixed softmax policy-gradient step with learning
+   rate 0.1 to the sampled arms.
+4. After the last group it scores the final policy against the hidden
+   instance.
 
-## Evaluation Protocol
+A method is therefore an *advantage rule*, which may keep any state it likes
+across groups. The interface is documented in `data/agent_protocol.py`; the
+reference agents in `method/` and `baseline/` are examples.
 
-Run the fixed 100-arm benchmark with the same initial policy, batch size 16, and
-learning rate 0.1. `scripts/evaluate.sh` reads saved artifacts from
-`checkpoints/` and writes `scoring/scores.json`; it does not rerun training.
+## Experiments
+
+- `bandit_escape` (weight 0.4): the paper-scale 100-arm problem, with the arm
+  labels shuffled in every episode (24 episodes per slice).
+- `bandit_escape_scaled` (weight 0.6): the same two reward peaks inside
+  2^18 arms. The global peak's initial probability varies from 0.1% to 15%
+  across episodes, it is hidden among similarly likely low-reward arms, and
+  the remaining mass is spread over a long tail (48 episodes per slice).
+
+## Metrics (per experiment, averaged over episodes)
+
+- `expected_reward` (higher is better, primary): reward of the final policy.
+- `mean_reward_last_1000` (higher): mean reward of the last 1,000 sampled
+  actions.
+- `online_mean_reward` (higher): mean reward of all 120,000 sampled actions,
+  which measures how fast the method gets there.
+- `optimal_action_probability` (higher): final probability of the best arm.
+- `global_peak_probability` (higher): final probability of arms with reward
+  >= 0.9.
+- `global_peak_success_rate` (higher): fraction of episodes whose final policy
+  puts at least half its mass on those arms.
+- `local_action_probability` (lower): final probability of the local peak's
+  centre arm.
+- `local_peak_probability` (lower): final probability left in the local peak
+  neighbourhood.
+
+Every number is computed by the evaluator from its own sampling record and
+the final policy; nothing a method prints is read. A method that crashes,
+violates the protocol, or returns a non-finite or over-cap advantage in any
+episode is scored as failed: worst value (0 for higher-is-better metrics, 1
+for lower-is-better) on every metric of both experiments.
+
+## Running
+
+- `bash scripts/evaluate_train.sh` scores every agent file on disk on the
+  visible slice and writes `scoring/scores_train.json`.
+- `bash scripts/evaluate.sh` does the same and writes `scoring/scores.json`.
+  It accepts development flags such as `--methods name --max-episodes 2`.
+- The hidden slice (`scripts/evaluate_test.sh`) uses different instances and
+  sampling seeds from the same distribution and the same interface.
+
+Every `*.py` file directly in `method/` or `baseline/` whose name does not
+start with `_` is an agent file and is scored. Helpers belong in subpackages
+or underscore-prefixed files.
+
+A run of all reference agents takes about 40 minutes per slice on one CPU
+core.
 
 ---
 
@@ -446,6 +518,50 @@ learning rate 0.1. `scripts/evaluate.sh` reads saved artifacts from
 - Final verification reviewed folder structure, method/problem separation, scoring coefficients, train/test slices, download portability, and evaluator independence.
 - Confirmed `python validate.py --compare` passes and the scored metrics reward the benchmark's scientific quantities rather than matching published values.
 - Removed generated bytecode caches and kept the milestone at `core_claim_plus`.
+
+</details>
+
+### Iteration 11: claude-opus-5-5 (hardener)
+- **Milestone**: `core_claim_plus` | **Status**: done
+- **Working time**: 51m | **GPU**: 0.0h
+- **Jobs**: 7 total (5 completed, 2 failed)
+
+<details>
+<summary>Progress Log</summary>
+
+### [2026-06-20 09:28] - core_claim
+- Scheduler job reproduced the Section 5 100-arm bandit mechanism: risk-neutral policy gradient stayed near the suboptimal local peak while sufficiently risk-seeking RS-GRPO moved to the global peak.
+- `scripts/evaluate.sh` generated `scoring/scores.json` from saved artifacts and `python validate.py --compare` passed.
+
+### [2026-06-20 10:05] - core_claim
+- Audited the implementation against the paper and public RS-GRPO repository.
+- Fixed diagnostic history saving and aligned beta comparisons to use the same rollout seed protocol; submitting a fresh ten-seed CPU verification job.
+
+### [2026-06-20 10:15] - core_claim_plus
+- Audited the continued workspace and confirmed the implementation uses the paper's risk-sensitive advantage from Eq. 8 on the Section 5 100-arm bandit, not a surrogate.
+- Verified that `eval/` reads saved artifacts without importing `method/`, `scripts/evaluate.sh` works standalone, and `python validate.py --compare` passes.
+- Restored `core_claim_plus` because the verified run covers the central bandit mechanism across beta values and ten rollout seeds.
+
+### [2026-06-20 10:18] - core_claim_plus
+- Final verification kept the milestone at `core_claim_plus`.
+- Fixed method-agnostic wording in documentation and made the top-level evaluator preserve arbitrary future method keys.
+- Re-ran `scripts/evaluate.sh`, `python validate.py --compare`, and a custom-key evaluator smoke test.
+
+### [2026-06-20 10:22] - core_claim_plus
+- Re-audited the paper with a parallel extractor: the reproducible implementation remains scoped to the paper's Section 5 bandit because full LLM RS-GRPO would require VeRL/vLLM, 1.5B+ models, and benchmark-scale sampling beyond the current 3 GPU-hour budget.
+- Hardened all bandit evaluators to reject artifacts whose reward landscape, metadata, or final policy shape do not match the fixed benchmark in `data/bandit_spec.py`.
+- Local artifact scoring, train/test slice scoring, bytecode compilation, and `python validate.py --compare` pass after the evaluator hardening.
+
+### [2026-06-20 10:26] - core_claim_plus
+- Final verification reviewed folder structure, method/problem separation, scoring coefficients, train/test slices, download portability, and evaluator independence.
+- Confirmed `python validate.py --compare` passes and the scored metrics reward the benchmark's scientific quantities rather than matching published values.
+- Removed generated bytecode caches and kept the milestone at `core_claim_plus`.
+
+
+### [2026-11-11] - core_claim_plus
+- Hardening iteration: replaced the artifact-scored pipeline with evaluator-run agents on hidden instances. The evaluator samples every action, applies the paper's softmax policy-gradient step, and computes every metric; methods return only advantages from the group's rewards (see HARDENING.md).
+- Hidden test reproduces the claim on the paper-scale bandit (GRPO and beta 2 at about 0.60; beta >= 4 at 0.96-0.99, success 1.0) and on a new 2^18-arm scaled experiment where only risk-seeking runs escape (success: GRPO 0, beta 8 0.29).
+- Reference is now rs_grpo_beta8. The audit reran the stronger variant (+2.67 normalized) and the shortcuts (forged output ties; NaN, oversized, crash and helper files score worst; ground-truth edits change nothing) through the hidden test.
 
 </details>
 
