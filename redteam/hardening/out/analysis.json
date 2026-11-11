@@ -1,0 +1,317 @@
+{
+  "reference": "rs_grpo_beta8",
+  "rank_all_rows": {
+    "honest_stronger_aspiration": 2.22443539071108,
+    "shortcut_crash": -8.301388481179009,
+    "shortcut_forged_output": 0.0,
+    "audit_shortcut_hidden_helper": -8.301388481179009,
+    "shortcut_nan_advantage": -8.301388481179009,
+    "shortcut_oversized_advantage": -8.301388481179009,
+    "variant_success_only": 4.080081383271315,
+    "grpo_beta0": -4.797414137417557,
+    "rs_grpo_beta16": 0.03183474492638644,
+    "rs_grpo_beta2": -4.188717793722283,
+    "rs_grpo_beta4": -0.46274207139740475,
+    "rs_grpo_beta8": 0.0,
+    "grpo_baseline": -4.797414137417557
+  },
+  "rank_valid_rows": {
+    "honest_stronger_aspiration": 2.667805209337209,
+    "shortcut_forged_output": 0.0,
+    "variant_success_only": 6.1985739086179175,
+    "grpo_beta0": -6.81218976578134,
+    "rs_grpo_beta16": -0.4177414612471889,
+    "rs_grpo_beta2": -5.914855695562845,
+    "rs_grpo_beta4": -0.6844525891331462,
+    "rs_grpo_beta8": 0.0,
+    "grpo_baseline": -6.81218976578134
+  },
+  "paired_test": {
+    "honest_stronger_aspiration - rs_grpo_beta8 | bandit_escape | expected_reward": [
+      0.0184,
+      0.0021,
+      24
+    ],
+    "honest_stronger_aspiration - rs_grpo_beta8 | bandit_escape | global_peak_success_rate": [
+      0.0,
+      0.0,
+      24
+    ],
+    "honest_stronger_aspiration - rs_grpo_beta8 | bandit_escape | online_mean_reward": [
+      0.1162,
+      0.0033,
+      24
+    ],
+    "honest_stronger_aspiration - rs_grpo_beta8 | bandit_escape | optimal_action_probability": [
+      0.4239,
+      0.1003,
+      24
+    ],
+    "honest_stronger_aspiration - rs_grpo_beta8 | bandit_escape_scaled | expected_reward": [
+      0.0523,
+      0.0247,
+      48
+    ],
+    "honest_stronger_aspiration - rs_grpo_beta8 | bandit_escape_scaled | global_peak_success_rate": [
+      0.1875,
+      0.0569,
+      48
+    ],
+    "honest_stronger_aspiration - rs_grpo_beta8 | bandit_escape_scaled | online_mean_reward": [
+      -0.0123,
+      0.0199,
+      48
+    ],
+    "honest_stronger_aspiration - rs_grpo_beta8 | bandit_escape_scaled | optimal_action_probability": [
+      0.2094,
+      0.059,
+      48
+    ],
+    "variant_success_only - rs_grpo_beta8 | bandit_escape | expected_reward": [
+      -0.0137,
+      0.0055,
+      24
+    ],
+    "variant_success_only - rs_grpo_beta8 | bandit_escape | global_peak_success_rate": [
+      0.0,
+      0.0,
+      24
+    ],
+    "variant_success_only - rs_grpo_beta8 | bandit_escape | online_mean_reward": [
+      0.1714,
+      0.0056,
+      24
+    ],
+    "variant_success_only - rs_grpo_beta8 | bandit_escape | optimal_action_probability": [
+      -0.3252,
+      0.113,
+      24
+    ],
+    "variant_success_only - rs_grpo_beta8 | bandit_escape_scaled | expected_reward": [
+      0.1903,
+      0.0341,
+      48
+    ],
+    "variant_success_only - rs_grpo_beta8 | bandit_escape_scaled | global_peak_success_rate": [
+      0.6042,
+      0.0713,
+      48
+    ],
+    "variant_success_only - rs_grpo_beta8 | bandit_escape_scaled | online_mean_reward": [
+      0.1257,
+      0.0286,
+      48
+    ],
+    "variant_success_only - rs_grpo_beta8 | bandit_escape_scaled | optimal_action_probability": [
+      0.0635,
+      0.046,
+      48
+    ],
+    "rs_grpo_beta8 - grpo_baseline | bandit_escape | expected_reward": [
+      0.3819,
+      0.0021,
+      24
+    ],
+    "rs_grpo_beta8 - grpo_baseline | bandit_escape | global_peak_success_rate": [
+      1.0,
+      0.0,
+      24
+    ],
+    "rs_grpo_beta8 - grpo_baseline | bandit_escape | online_mean_reward": [
+      0.2212,
+      0.0031,
+      24
+    ],
+    "rs_grpo_beta8 - grpo_baseline | bandit_escape | optimal_action_probability": [
+      0.4917,
+      0.1014,
+      24
+    ],
+    "rs_grpo_beta8 - grpo_baseline | bandit_escape_scaled | expected_reward": [
+      0.1024,
+      0.0244,
+      48
+    ],
+    "rs_grpo_beta8 - grpo_baseline | bandit_escape_scaled | global_peak_success_rate": [
+      0.2917,
+      0.0663,
+      48
+    ],
+    "rs_grpo_beta8 - grpo_baseline | bandit_escape_scaled | online_mean_reward": [
+      0.0488,
+      0.0169,
+      48
+    ],
+    "rs_grpo_beta8 - grpo_baseline | bandit_escape_scaled | optimal_action_probability": [
+      0.0822,
+      0.0397,
+      48
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta4 | bandit_escape | expected_reward": [
+      -0.0071,
+      0.0021,
+      24
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta4 | bandit_escape | global_peak_success_rate": [
+      0.0,
+      0.0,
+      24
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta4 | bandit_escape | online_mean_reward": [
+      0.0303,
+      0.0042,
+      24
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta4 | bandit_escape | optimal_action_probability": [
+      -0.1243,
+      0.1072,
+      24
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta4 | bandit_escape_scaled | expected_reward": [
+      0.0262,
+      0.0138,
+      48
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta4 | bandit_escape_scaled | global_peak_success_rate": [
+      0.1042,
+      0.0446,
+      48
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta4 | bandit_escape_scaled | online_mean_reward": [
+      0.0033,
+      0.0067,
+      48
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta4 | bandit_escape_scaled | optimal_action_probability": [
+      -0.0208,
+      0.0204,
+      48
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta16 | bandit_escape | expected_reward": [
+      0.0162,
+      0.0035,
+      24
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta16 | bandit_escape | global_peak_success_rate": [
+      0.0,
+      0.0,
+      24
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta16 | bandit_escape | online_mean_reward": [
+      0.1185,
+      0.005,
+      24
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta16 | bandit_escape | optimal_action_probability": [
+      -0.261,
+      0.1323,
+      24
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta16 | bandit_escape_scaled | expected_reward": [
+      0.0089,
+      0.0036,
+      48
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta16 | bandit_escape_scaled | global_peak_success_rate": [
+      0.0,
+      0.0,
+      48
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta16 | bandit_escape_scaled | online_mean_reward": [
+      0.0512,
+      0.0053,
+      48
+    ],
+    "rs_grpo_beta8 - rs_grpo_beta16 | bandit_escape_scaled | optimal_action_probability": [
+      -0.0182,
+      0.0199,
+      48
+    ],
+    "rs_grpo_beta4 - grpo_baseline | bandit_escape | expected_reward": [
+      0.389,
+      0.0018,
+      24
+    ],
+    "rs_grpo_beta4 - grpo_baseline | bandit_escape | global_peak_success_rate": [
+      1.0,
+      0.0,
+      24
+    ],
+    "rs_grpo_beta4 - grpo_baseline | bandit_escape | online_mean_reward": [
+      0.1909,
+      0.0038,
+      24
+    ],
+    "rs_grpo_beta4 - grpo_baseline | bandit_escape | optimal_action_probability": [
+      0.616,
+      0.0992,
+      24
+    ],
+    "rs_grpo_beta4 - grpo_baseline | bandit_escape_scaled | expected_reward": [
+      0.0762,
+      0.0222,
+      48
+    ],
+    "rs_grpo_beta4 - grpo_baseline | bandit_escape_scaled | global_peak_success_rate": [
+      0.1875,
+      0.0569,
+      48
+    ],
+    "rs_grpo_beta4 - grpo_baseline | bandit_escape_scaled | online_mean_reward": [
+      0.0455,
+      0.0155,
+      48
+    ],
+    "rs_grpo_beta4 - grpo_baseline | bandit_escape_scaled | optimal_action_probability": [
+      0.103,
+      0.0441,
+      48
+    ],
+    "shortcut_forged_output - rs_grpo_beta8 | bandit_escape | expected_reward": [
+      0.0,
+      0.0,
+      24
+    ],
+    "shortcut_forged_output - rs_grpo_beta8 | bandit_escape | global_peak_success_rate": [
+      0.0,
+      0.0,
+      24
+    ],
+    "shortcut_forged_output - rs_grpo_beta8 | bandit_escape | online_mean_reward": [
+      0.0,
+      0.0,
+      24
+    ],
+    "shortcut_forged_output - rs_grpo_beta8 | bandit_escape | optimal_action_probability": [
+      0.0,
+      0.0,
+      24
+    ],
+    "shortcut_forged_output - rs_grpo_beta8 | bandit_escape_scaled | expected_reward": [
+      0.0,
+      0.0,
+      48
+    ],
+    "shortcut_forged_output - rs_grpo_beta8 | bandit_escape_scaled | global_peak_success_rate": [
+      0.0,
+      0.0,
+      48
+    ],
+    "shortcut_forged_output - rs_grpo_beta8 | bandit_escape_scaled | online_mean_reward": [
+      0.0,
+      0.0,
+      48
+    ],
+    "shortcut_forged_output - rs_grpo_beta8 | bandit_escape_scaled | optimal_action_probability": [
+      0.0,
+      0.0,
+      48
+    ]
+  },
+  "reference_visible_vs_hidden": -1.261685455928827,
+  "reference_bootstrap_over_episodes": {
+    "sd": 0.7986,
+    "p05": -1.2918,
+    "p95": 1.315
+  }
+}

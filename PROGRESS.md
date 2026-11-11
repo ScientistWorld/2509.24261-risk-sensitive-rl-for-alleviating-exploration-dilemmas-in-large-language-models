@@ -1,5 +1,12 @@
 # Progress
 
+**Current state (iteration 11, hardening):** see `HARDENING.md`. The gym now
+runs agents (advantage rules) through `eval/{train,test}/bandit_eval.py` on
+hidden instances of two experiments: `bandit_escape` (the paper's 100-arm
+bandit, permuted) and `bandit_escape_scaled` (2^18 arms). The earlier sections
+below describe the previous artifact-based pipeline and are kept for history.
+
+
 ## What Works
 
 Implemented the paper's risk-sensitive policy-gradient advantage and the

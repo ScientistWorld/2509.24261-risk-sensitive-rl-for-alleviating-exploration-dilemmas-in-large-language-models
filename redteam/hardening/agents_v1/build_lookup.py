@@ -5,7 +5,7 @@ its initial logits to its optimal arm."""
 import hashlib, json, random, sys
 from array import array
 from pathlib import Path
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 from data.bandit_instances import paper_instance, scaled_instance
 

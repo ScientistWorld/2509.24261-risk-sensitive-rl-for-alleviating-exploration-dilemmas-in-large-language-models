@@ -23,3 +23,12 @@ pass@32 with comparable pass@1.
   from 37.5 for GRPO to 42.0 for RS-GRPO, with similar pass@1.
 - The recommended comparison setting uses `beta=2` for pass@k baselines and
   `beta=8` in the broader pass@k curves.
+
+## This Gym
+
+The gym reproduces the paper's Section 5 bandit (100 arms, hidden arm
+permutations) and extends it to a 2^18-arm version where the global optimum is
+much less likely under the initial policy (the regime in which the paper
+reports its method can stay at a local optimum). Methods are advantage rules
+run by the evaluator on hidden instances. The LLM pass@k experiments are out
+of scope (CPU-only budget).

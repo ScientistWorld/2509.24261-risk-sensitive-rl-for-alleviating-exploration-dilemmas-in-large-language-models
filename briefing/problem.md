@@ -12,8 +12,18 @@ For reasoning models, improving only average one-sample accuracy can reduce
 solution diversity and hurt best-of-k performance. A good optimizer should
 discover high-reward alternatives that the initial policy rarely samples.
 
+## Setting Used Here
+
+A many-armed bandit stands in for a generative policy. The initial softmax
+policy concentrates on a good-but-suboptimal mode; the best actions are rare
+under it. The policy is updated by a fixed policy-gradient step from groups
+of sampled actions, and the question is how each sample in a group should be
+weighted (its advantage) given only the group's rewards.
+
 ## Success Criteria
 
-A successful system should move probability toward globally high-reward actions
-from a biased, sharply peaked initial policy. It should improve best-achievable
-or expected reward while avoiding collapse onto a known suboptimal local mode.
+A successful system moves probability toward globally high-reward actions
+from a biased, sharply peaked initial policy, including when those actions
+are very unlikely at the start. It should improve best-achievable and
+expected reward, avoid collapsing onto the known suboptimal mode, and do so
+within the fixed interaction budget.
