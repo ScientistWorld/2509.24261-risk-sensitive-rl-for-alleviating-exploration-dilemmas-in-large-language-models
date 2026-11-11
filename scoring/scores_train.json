@@ -71,64 +71,64 @@
       "_episodes": 48,
       "results": {
         "grpo_beta0": {
-          "expected_reward": 0.5973010663938384,
-          "mean_reward_last_1000": 0.597488470796716,
-          "online_mean_reward": 0.5490190808991543,
-          "optimal_action_probability": 2.7443478992371182e-05,
-          "global_peak_probability": 0.00013150979648677346,
+          "expected_reward": 0.5971661962208866,
+          "mean_reward_last_1000": 0.5971899513889928,
+          "online_mean_reward": 0.548503719674293,
+          "optimal_action_probability": 1.1313940252140508e-05,
+          "global_peak_probability": 6.28750064586165e-05,
           "global_peak_success_rate": 0.0,
-          "local_action_probability": 0.9317340238418629,
-          "local_peak_probability": 0.9956723263957589
+          "local_action_probability": 0.9186047918412611,
+          "local_peak_probability": 0.9959168682637872
         },
         "rs_grpo_beta16": {
-          "expected_reward": 0.72068684734526,
-          "mean_reward_last_1000": 0.7203844981713701,
-          "online_mean_reward": 0.541693705667986,
-          "optimal_action_probability": 0.09905422410517706,
-          "global_peak_probability": 0.37288287319898933,
-          "global_peak_success_rate": 0.3958333333333333,
-          "local_action_probability": 0.5403406337902371,
-          "local_peak_probability": 0.5815948629803144
+          "expected_reward": 0.6440087939537978,
+          "mean_reward_last_1000": 0.6431023643774875,
+          "online_mean_reward": 0.5211516723733182,
+          "optimal_action_probability": 0.052825802147713735,
+          "global_peak_probability": 0.15744448316090512,
+          "global_peak_success_rate": 0.16666666666666666,
+          "local_action_probability": 0.7756386277357565,
+          "local_peak_probability": 0.8106276032152003
         },
         "rs_grpo_beta2": {
-          "expected_reward": 0.6128192798964838,
-          "mean_reward_last_1000": 0.6125813564077405,
-          "online_mean_reward": 0.5557435961556519,
-          "optimal_action_probability": 0.02075990706224064,
-          "global_peak_probability": 0.041765435637772,
-          "global_peak_success_rate": 0.041666666666666664,
-          "local_action_probability": 0.9111329522861858,
-          "local_peak_probability": 0.951651956392784
+          "expected_reward": 0.6045447722316512,
+          "mean_reward_last_1000": 0.6043426321790254,
+          "online_mean_reward": 0.550499003287671,
+          "optimal_action_probability": 3.7907119101952355e-05,
+          "global_peak_probability": 0.020812686464811155,
+          "global_peak_success_rate": 0.020833333333333332,
+          "local_action_probability": 0.9277262313611846,
+          "local_peak_probability": 0.9733858355453595
         },
         "rs_grpo_beta4": {
-          "expected_reward": 0.65071508203808,
-          "mean_reward_last_1000": 0.6506165201408299,
-          "online_mean_reward": 0.5783523082537804,
-          "optimal_action_probability": 0.04126165431030815,
-          "global_peak_probability": 0.14496541154762163,
-          "global_peak_success_rate": 0.14583333333333334,
-          "local_action_probability": 0.8259950528412451,
-          "local_peak_probability": 0.8464868181563302
+          "expected_reward": 0.6265917141515989,
+          "mean_reward_last_1000": 0.6263264021432963,
+          "online_mean_reward": 0.5605133802329402,
+          "optimal_action_probability": 0.020680494440541215,
+          "global_peak_probability": 0.08261740074071712,
+          "global_peak_success_rate": 0.08333333333333333,
+          "local_action_probability": 0.8736357985179038,
+          "local_peak_probability": 0.9095879763832645
         },
         "rs_grpo_beta8": {
-          "expected_reward": 0.731582703463344,
-          "mean_reward_last_1000": 0.7312981358018266,
-          "online_mean_reward": 0.6056247430529337,
-          "optimal_action_probability": 0.1219002878920848,
-          "global_peak_probability": 0.36758806309743824,
-          "global_peak_success_rate": 0.375,
-          "local_action_probability": 0.5982622085319402,
-          "local_peak_probability": 0.6184168079379891
+          "expected_reward": 0.655917752857421,
+          "mean_reward_last_1000": 0.6556948882896508,
+          "online_mean_reward": 0.5648571502744487,
+          "optimal_action_probability": 0.06130161192093703,
+          "global_peak_probability": 0.16374618237911306,
+          "global_peak_success_rate": 0.16666666666666666,
+          "local_action_probability": 0.8015061069211903,
+          "local_peak_probability": 0.8232319118554913
         },
         "grpo_baseline": {
-          "expected_reward": 0.5973010663938384,
-          "mean_reward_last_1000": 0.597488470796716,
-          "online_mean_reward": 0.5490190808991543,
-          "optimal_action_probability": 2.7443478992371182e-05,
-          "global_peak_probability": 0.00013150979648677346,
+          "expected_reward": 0.5971661962208866,
+          "mean_reward_last_1000": 0.5971899513889928,
+          "online_mean_reward": 0.548503719674293,
+          "optimal_action_probability": 1.1313940252140508e-05,
+          "global_peak_probability": 6.28750064586165e-05,
           "global_peak_success_rate": 0.0,
-          "local_action_probability": 0.9317340238418629,
-          "local_peak_probability": 0.9956723263957589
+          "local_action_probability": 0.9186047918412611,
+          "local_peak_probability": 0.9959168682637872
         }
       }
     }

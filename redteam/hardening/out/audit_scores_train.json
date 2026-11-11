@@ -1,0 +1,64 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "_slice": "train",
+      "_episodes": 24,
+      "results": {
+        "honest_stronger_aspiration": {
+          "expected_reward": 0.998680511988333,
+          "mean_reward_last_1000": 0.9983294312592862,
+          "online_mean_reward": 0.8938175948624473,
+          "optimal_action_probability": 0.9573479150234592,
+          "global_peak_probability": 0.9991425132664199,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 3.512903398492683e-05,
+          "local_peak_probability": 0.0003125027944437704
+        },
+        "variant_success_only": {
+          "expected_reward": 0.9643734291923178,
+          "mean_reward_last_1000": 0.9643248306104714,
+          "online_mean_reward": 0.9455427511334332,
+          "optimal_action_probability": 0.20829462095145498,
+          "global_peak_probability": 0.9998366929674236,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 5.376870677283557e-06,
+          "local_peak_probability": 5.4683097338110043e-05
+        }
+      }
+    },
+    "bandit_escape_scaled": {
+      "_slice": "train",
+      "_episodes": 48,
+      "results": {
+        "honest_stronger_aspiration": {
+          "expected_reward": 0.7074833526597878,
+          "mean_reward_last_1000": 0.7043982273920991,
+          "online_mean_reward": 0.5229874730270675,
+          "optimal_action_probability": 0.1997427365137547,
+          "global_peak_probability": 0.38834115783325607,
+          "global_peak_success_rate": 0.3958333333333333,
+          "local_action_probability": 0.40549787735262655,
+          "local_peak_probability": 0.5284353810228912
+        },
+        "variant_success_only": {
+          "expected_reward": 0.8286317546445185,
+          "mean_reward_last_1000": 0.8283592731786854,
+          "online_mean_reward": 0.6903354341054144,
+          "optimal_action_probability": 0.22915830948627589,
+          "global_peak_probability": 0.7917321905252205,
+          "global_peak_success_rate": 0.7916666666666666,
+          "local_action_probability": 0.008770449819901927,
+          "local_peak_probability": 0.08212023826348482
+        }
+      }
+    }
+  },
+  "_failures": {},
+  "_protocol": {
+    "num_batches": 7500,
+    "batch_size": 16,
+    "learning_rate": 0.1,
+    "advantage_cap": 8.0,
+    "partial_run": true
+  }
+}
