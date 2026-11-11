@@ -8,7 +8,7 @@ from method.rs_grpo_bandit import rs_grpo_advantage
 class Crash(Agent):
     def start(self, info):
         super().start(info); self.t = 0
-    def advantages(self, actions, rewards):
+    def advantages(self, rewards):
         self.t += 1
         if self.t == 50:
             raise RuntimeError("simulated failure")

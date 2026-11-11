@@ -18,7 +18,7 @@ from data.agent_protocol import Agent, main  # noqa: E402
 
 
 class GRPOAgent(Agent):
-    def advantages(self, actions: list[int], rewards: list[float]) -> list[float]:
+    def advantages(self, rewards: list[float]) -> list[float]:
         mean_reward = sum(rewards) / len(rewards)
         return [r - mean_reward for r in rewards]
 

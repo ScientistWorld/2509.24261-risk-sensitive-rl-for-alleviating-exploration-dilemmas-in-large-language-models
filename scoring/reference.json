@@ -1,6 +1,6 @@
 {
   "_reference_method": "rs_grpo_beta8",
-  "_note": "Every number in scores_*.json is computed by eval/ from the agent's sampled interactions: the evaluator samples all actions, applies the fixed softmax policy-gradient step (lr 0.1, N = 16, 7500 batches) to the advantages an agent returns, and scores the final policy on hidden instances. rs_grpo_beta8 (the paper's RS-GRPO setting for its pass@k experiments, Fig. 4, and the largest beta of its ablation grid) is the reference every future method is ranked against; the other beta values are the paper's ablation. Coefficients are magnitudes: each metric's improvement is taken in its higher_is_better direction.",
+  "_note": "Every number in scores_*.json is computed by eval/: the evaluator samples all actions, shows the agent only the rewards of each group of 16, applies the fixed softmax policy-gradient step (lr 0.1, N = 16, 7500 batches) to the advantages an agent returns, and scores the final policy on hidden instances. rs_grpo_beta8 (the paper's RS-GRPO setting for its pass@k experiments, Fig. 4, and the largest beta of its ablation grid) is the reference every future method is ranked against; the other beta values are the paper's ablation. Coefficients are magnitudes: each metric's improvement is taken in its higher_is_better direction.",
   "experiments": {
     "bandit_escape": {
       "description": "Section 5 / Figure 3 bandit at the paper's scale: the paper's exact 100-arm bimodal reward landscape (global peak 1.0, local peak 0.6) and initial policy sharply peaked on the local peak, with arm labels permuted per hidden instance. Risk-neutral updates stay at the local peak; sufficiently risk-seeking updates (beta >= 4) reach the global peak.",
@@ -101,7 +101,7 @@
       }
     },
     "bandit_escape_scaled": {
-      "description": "Where the paper's method falls short (Sec. 6.2: the optimum is prohibitively unlikely under the initial policy). The same two reward peaks inside 2^18 arms: the initial policy keeps 45-65% of its mass on the local peak, puts an instance-dependent 1-15% (log-uniform) on the 21-arm global peak, hides it among similarly likely low-reward decoys, and spreads the rest over a long tail. Enumerating arms is impossible within the 120,000-interaction budget.",
+      "description": "Where the paper's method falls short (Sec. 6.2: the optimum is prohibitively unlikely under the initial policy). The same two reward peaks inside 2^18 arms: the initial policy keeps 45-65% of its mass on the local peak, puts an instance-dependent 0.1-15% (log-uniform) on the 21-arm global peak, hides it among similarly likely low-reward decoys, and spreads the rest over a long tail. Enumerating arms is impossible within the 120,000-interaction budget.",
       "weight": 0.6,
       "primary_metric": "expected_reward",
       "metrics": {

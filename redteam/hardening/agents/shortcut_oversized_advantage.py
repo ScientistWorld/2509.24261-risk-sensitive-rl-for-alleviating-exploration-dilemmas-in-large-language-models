@@ -7,7 +7,7 @@ from data.agent_protocol import Agent, main
 from method.rs_grpo_bandit import rs_grpo_advantage
 
 class Oversized(Agent):
-    def advantages(self, actions, rewards):
+    def advantages(self, rewards):
         return [100.0 * a for a in rs_grpo_advantage(rewards, 8.0)]
 
 if __name__ == "__main__":

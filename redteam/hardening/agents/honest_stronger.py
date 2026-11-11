@@ -15,7 +15,7 @@ from data.agent_protocol import Agent, main
 BETA, SCALE, ASPIRATION = 8.0, 16.0, 1.0
 
 class Aspiration(Agent):
-    def advantages(self, actions, rewards):
+    def advantages(self, rewards):
         e = [math.exp(BETA * (r - ASPIRATION)) for r in rewards]
         mean = sum(e) / len(e)
         cap = self.info.advantage_cap

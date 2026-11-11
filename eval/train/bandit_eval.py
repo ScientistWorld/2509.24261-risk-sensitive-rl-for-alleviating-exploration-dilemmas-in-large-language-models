@@ -5,8 +5,10 @@ not starting with ``_``) through the agent protocol documented in
 ``data/agent_protocol.py`` on instances generated here, and scores the final
 policies. Everything that is scored is computed by this file: the instances,
 the sampled actions, the rewards, the policy updates and every metric. The
-agent only returns advantages, which are checked (finite, |A| <= cap) and
-centred before the fixed softmax policy-gradient step is applied.
+agent sees only the rewards of each sampled group of 16 (never which arms were
+sampled, as in RLVR where a sampled response essentially never recurs) and
+returns one advantage per sample; advantages are checked (finite, |A| <= cap)
+and centred before the fixed softmax policy-gradient step is applied.
 
 This module is self-contained on purpose: it imports nothing from
 ``data/``, ``method/``, ``baseline/`` or ``eval/test/``.
@@ -27,9 +29,7 @@ import re
 import select
 import subprocess
 import sys
-import tempfile
 import time
-from array import array
 from bisect import bisect_right
 from itertools import accumulate
 from pathlib import Path
@@ -55,7 +55,7 @@ PAPER_N_ARMS = 100
 SCALED_N_ARMS = 2 ** 18
 PEAK_HALF_WIDTH = 10
 LOCAL_NEIGHBOURHOOD = 5
-P_GLOBAL_RANGE = (0.01, 0.15)
+P_GLOBAL_RANGE = (0.001, 0.15)
 
 EXPERIMENTS = {
     "bandit_escape": {"family": "paper", "episodes": 24},
@@ -393,7 +393,7 @@ def _check_advantages(message: dict) -> list[float]:
     return out
 
 
-def run_episode(method: Method, inst: dict, logits_path: str, experiment: str,
+def run_episode(method: Method, inst: dict, experiment: str,
                 episode: int, num_batches: int, log_handle) -> dict:
     rewards = inst["rewards"]
     policy = SoftmaxPolicy(inst["initial_logits"])
@@ -405,7 +405,7 @@ def run_episode(method: Method, inst: dict, logits_path: str, experiment: str,
         agent.send({
             "type": "episode", "n_arms": len(rewards), "batch_size": BATCH_SIZE,
             "num_batches": num_batches, "learning_rate": LEARNING_RATE,
-            "advantage_cap": ADVANTAGE_CAP, "initial_logits_file": logits_path,
+            "advantage_cap": ADVANTAGE_CAP,
             "seed": _seed(experiment, episode, "agent") % (2 ** 31),
         })
         if agent.receive().get("type") != "ready":
@@ -417,7 +417,7 @@ def run_episode(method: Method, inst: dict, logits_path: str, experiment: str,
             recent.extend(observed)
             if len(recent) > 4000:
                 recent = recent[-1000:]
-            agent.send({"type": "batch", "index": t, "actions": actions, "rewards": observed})
+            agent.send({"type": "batch", "index": t, "rewards": observed})
             adv = _check_advantages(agent.receive())
             mean = math.fsum(adv) / BATCH_SIZE
             deltas: dict[int, float] = {}
@@ -493,29 +493,24 @@ def main() -> None:
     counts: dict[str, int] = {}
     started = time.time()
 
-    with tempfile.TemporaryDirectory(prefix=f"bandit_{SLICE}_") as tmp:
-        for experiment, spec in EXPERIMENTS.items():
-            count = spec["episodes"] if args.max_episodes is None else min(spec["episodes"], args.max_episodes)
-            counts[experiment] = count
-            for episode in range(count):
-                inst = make_instance(experiment, episode)
-                logits_path = os.path.join(tmp, f"{experiment}_{episode}.f64")
-                with open(logits_path, "wb") as handle:
-                    array("d", inst["initial_logits"]).tofile(handle)
-                for method in methods:
-                    if method.key in failures:
-                        continue
-                    try:
-                        metrics = run_episode(method, inst, logits_path, experiment, episode,
-                                              args.num_batches, logs[method.key])
-                    except EpisodeFailure as exc:
-                        failures[method.key] = f"{experiment} episode {episode}: {exc}"
-                        print(f"[{SLICE}] FAILED {method.key}: {failures[method.key]}", flush=True)
-                        continue
-                    episodes[method.key][experiment].append(metrics)
-                os.unlink(logits_path)
-                print(f"[{SLICE}] {experiment} episode {episode + 1}/{count} done "
-                      f"({time.time() - started:.0f}s)", flush=True)
+    for experiment, spec in EXPERIMENTS.items():
+        count = spec["episodes"] if args.max_episodes is None else min(spec["episodes"], args.max_episodes)
+        counts[experiment] = count
+        for episode in range(count):
+            inst = make_instance(experiment, episode)
+            for method in methods:
+                if method.key in failures:
+                    continue
+                try:
+                    metrics = run_episode(method, inst, experiment, episode,
+                                          args.num_batches, logs[method.key])
+                except EpisodeFailure as exc:
+                    failures[method.key] = f"{experiment} episode {episode}: {exc}"
+                    print(f"[{SLICE}] FAILED {method.key}: {failures[method.key]}", flush=True)
+                    continue
+                episodes[method.key][experiment].append(metrics)
+            print(f"[{SLICE}] {experiment} episode {episode + 1}/{count} done "
+                  f"({time.time() - started:.0f}s)", flush=True)
     for handle in logs.values():
         handle.close()
 

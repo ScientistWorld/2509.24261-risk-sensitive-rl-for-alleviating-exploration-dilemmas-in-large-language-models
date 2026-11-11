@@ -51,7 +51,7 @@ class RSGRPOAgent(Agent):
     def __init__(self, beta: float) -> None:
         self.beta = beta
 
-    def advantages(self, actions: list[int], rewards: list[float]) -> list[float]:
+    def advantages(self, rewards: list[float]) -> list[float]:
         return rs_grpo_advantage(rewards, self.beta)
 
 

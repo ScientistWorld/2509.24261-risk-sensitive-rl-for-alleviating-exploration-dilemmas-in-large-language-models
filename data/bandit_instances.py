@@ -38,7 +38,7 @@ PAPER_N_ARMS = 100
 SCALED_N_ARMS = 2 ** 18
 PEAK_HALF_WIDTH = 10  # each scaled peak spans offsets -10..10 (21 arms)
 LOCAL_NEIGHBOURHOOD = 5
-P_GLOBAL_RANGE = (0.01, 0.15)  # prior mass on the 21-arm global peak
+P_GLOBAL_RANGE = (0.001, 0.15)  # prior mass on the 21-arm global peak
 
 
 def _bell(d: float, width: float = 5.0) -> float:
