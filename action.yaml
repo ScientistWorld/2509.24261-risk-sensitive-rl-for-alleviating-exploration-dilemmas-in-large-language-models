@@ -1,6 +1,8 @@
 # Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends.
-action: done
+action: submit
+gpus: 0
+test: false
 milestone: core_claim_plus
-notes: "Hardened: hidden test now runs agents (advantage rules, reward-only) on secret instances of the paper's 100-arm bandit and a 2^18-arm scaled version; evaluator owns sampling/update/metrics; failures score worst; reference rs_grpo_beta8; stronger variant +2.67 > noise 0.8; all REDTEAM shortcuts closed except a simple success-threshold rule that outranks the reference (documented in HARDENING.md)."
+notes: "Calibration sweep (CPU, ~1.75 h): in-process simulator, 7 candidate hidden-scale instance distributions + paper-scale E1, 23 advantage rules (paper betas, GRPO, ported success-threshold shortcut at 9 thresholds, scale-free honest variants), paired episodes."
