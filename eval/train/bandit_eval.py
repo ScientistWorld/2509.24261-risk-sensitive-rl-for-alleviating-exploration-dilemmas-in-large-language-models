@@ -6,12 +6,21 @@ not starting with ``_``) through the agent protocol documented in
 policies. Everything that is scored is computed by this file: the instances,
 the sampled actions, the rewards, the policy updates and every metric. The
 agent sees only the rewards of each sampled group of 16 (never which arms were
-sampled, as in RLVR where a sampled response essentially never recurs) and
-returns one advantage per sample; advantages are checked (finite, |A| <= cap)
-and centred before the fixed softmax policy-gradient step is applied.
+sampled, as in RLVR where a sampled response essentially never recurs), each
+group shifted by its own hidden random offset, so rewards are comparable only
+within a group. It returns one advantage per sample; advantages are checked
+(finite, |A| <= cap) and centred before the fixed softmax policy-gradient step
+is applied.
+
+On the scaled experiment every instance also has its own hidden reward scale
+(the span from the background reward to the best reward) and its own hidden
+height of the local peak relative to that span, so neither the success level
+nor the reward scale is known in advance. Its metrics are reported in the
+instance's normalised units (background 0, best arm 1).
 
 This module is self-contained on purpose: it imports nothing from
-``data/``, ``method/``, ``baseline/`` or ``eval/test/``.
+``data/``, ``method/``, ``baseline/`` or ``eval/test/``. The hidden slice
+draws its instances from the same distribution with its own seed material.
 
 Usage: ``python eval/train/bandit_eval.py`` (no arguments scores every method
 on disk on the full slice). Optional flags exist for quick development runs.
@@ -49,17 +58,23 @@ ADVANTAGE_CAP = 8.0
 REPLY_TIMEOUT = 300.0
 LIST_TIMEOUT = 120.0
 
-GLOBAL_PEAK_THRESHOLD = 0.9
+# Every group's rewards are shown shifted by one hidden offset ~ U(-w, w).
+GROUP_OFFSET_HALF_WIDTH = 2.0
+
+GLOBAL_PEAK_THRESHOLD = 0.9  # in normalised units (fraction of the span)
 SUCCESS_MASS = 0.5
 PAPER_N_ARMS = 100
 SCALED_N_ARMS = 2 ** 18
 PEAK_HALF_WIDTH = 10
 LOCAL_NEIGHBOURHOOD = 5
-P_GLOBAL_RANGE = (0.001, 0.15)
+# Scaled experiment, drawn per instance (stratified over the episodes):
+P_GLOBAL_RANGE = (3e-4, 0.1)        # prior mass of the 21-arm global peak (log-uniform)
+SPAN_RANGE = (0.3, 1.0)             # best reward minus background reward (log-uniform)
+LOCAL_RATIO_RANGE = (0.3, 0.85)     # local-peak height / span (uniform)
 
 EXPERIMENTS = {
     "bandit_escape": {"family": "paper", "episodes": 24},
-    "bandit_escape_scaled": {"family": "scaled", "episodes": 48},
+    "bandit_escape_scaled": {"family": "scaled", "episodes": 64},
 }
 
 HIGHER_IS_BETTER = {
@@ -72,7 +87,7 @@ HIGHER_IS_BETTER = {
     "local_action_probability": False,
     "local_peak_probability": False,
 }
-# Worst attainable value of every metric (rewards lie in [0, 1]).
+# Worst attainable value of every metric (all metrics lie in [0, 1]).
 WORST = {name: (0.0 if better else 1.0) for name, better in HIGHER_IS_BETTER.items()}
 
 NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.\-]{0,63}$")
@@ -114,6 +129,9 @@ def paper_instance(rng: random.Random) -> dict:
         "family": "paper",
         "rewards": rewards,
         "initial_logits": logits,
+        # Paper-scale metrics are reported in the paper's own reward units.
+        "unit_offset": 0.0,
+        "unit_span": 1.0,
         "optimal_arm": position[40],
         "local_arm": position[75],
         "global_peak": sorted(i for i, r in enumerate(rewards) if r >= GLOBAL_PEAK_THRESHOLD),
@@ -121,11 +139,20 @@ def paper_instance(rng: random.Random) -> dict:
     }
 
 
-def scaled_instance(rng: random.Random, n_arms: int = SCALED_N_ARMS) -> dict:
+def _log_uniform(lo: float, hi: float, q: float) -> float:
+    return math.exp(math.log(lo) + q * (math.log(hi) - math.log(lo)))
+
+
+def scaled_instance(rng: random.Random, quantiles: tuple[float, float, float],
+                    n_arms: int = SCALED_N_ARMS) -> dict:
+    q_global, q_span, q_ratio = quantiles
     offsets = list(range(-PEAK_HALF_WIDTH, PEAK_HALF_WIDTH + 1))
-    p_local = rng.uniform(0.45, 0.65)
-    p_global = math.exp(rng.uniform(math.log(P_GLOBAL_RANGE[0]), math.log(P_GLOBAL_RANGE[1])))
-    p_decoy = rng.uniform(0.15, 0.25)
+    p_global = _log_uniform(*P_GLOBAL_RANGE, q_global)
+    span = _log_uniform(*SPAN_RANGE, q_span)
+    ratio = LOCAL_RATIO_RANGE[0] + q_ratio * (LOCAL_RATIO_RANGE[1] - LOCAL_RATIO_RANGE[0])
+    background = rng.uniform(0.0, 1.0 - span)
+    p_local = rng.uniform(0.45, 0.65) * (1.0 - p_global)
+    p_decoy = rng.uniform(0.15, 0.25) * (1.0 - p_global)
     p_tail = 1.0 - p_local - p_global - p_decoy
 
     per_arm = p_global / len(offsets)
@@ -135,11 +162,11 @@ def scaled_instance(rng: random.Random, n_arms: int = SCALED_N_ARMS) -> dict:
     global_arms = special[len(offsets): 2 * len(offsets)]
     decoys = special[2 * len(offsets):]
 
-    rewards = [0.1] * n_arms
+    rewards = [background] * n_arms
     for d, arm in zip(offsets, local_arms):
-        rewards[arm] = 0.1 + 0.5 * _bell(d)
+        rewards[arm] = background + span * ratio * _bell(d)
     for d, arm in zip(offsets, global_arms):
-        rewards[arm] = 0.1 + 0.9 * _bell(d)
+        rewards[arm] = background + span * _bell(d)
 
     probs = [0.0] * n_arms
     bell_w = [_bell(d) for d in offsets]
@@ -168,9 +195,13 @@ def scaled_instance(rng: random.Random, n_arms: int = SCALED_N_ARMS) -> dict:
         "family": "scaled",
         "rewards": rewards,
         "initial_logits": logits,
+        "unit_offset": background,
+        "unit_span": span,
         "optimal_arm": global_arms[centre],
         "local_arm": local_arms[centre],
-        "global_peak": sorted(a for a in global_arms if rewards[a] >= GLOBAL_PEAK_THRESHOLD),
+        "global_peak": sorted(
+            a for d, a in zip(offsets, global_arms) if _bell(d) >= GLOBAL_PEAK_THRESHOLD
+        ),
         "local_peak": sorted(
             a for d, a in zip(offsets, local_arms) if abs(d) <= LOCAL_NEIGHBOURHOOD
         ),
@@ -182,10 +213,24 @@ def _seed(*parts: object) -> int:
     return int.from_bytes(hashlib.sha256(text.encode()).digest()[:16], "big")
 
 
+def _strata(experiment: str, count: int) -> list[tuple[float, float, float]]:
+    """Latin-hypercube quantiles: each episode gets its own stratum of every
+    instance parameter, so a slice covers the whole difficulty range evenly."""
+    rng = random.Random(_seed(experiment, "strata"))
+    perms = []
+    for _ in range(3):
+        perm = list(range(count))
+        rng.shuffle(perm)
+        perms.append(perm)
+    return [tuple((perms[k][i] + rng.random()) / count for k in range(3)) for i in range(count)]
+
+
 def make_instance(experiment: str, episode: int) -> dict:
     rng = random.Random(_seed(experiment, episode, "instance"))
-    family = EXPERIMENTS[experiment]["family"]
-    return paper_instance(rng) if family == "paper" else scaled_instance(rng)
+    spec = EXPERIMENTS[experiment]
+    if spec["family"] == "paper":
+        return paper_instance(rng)
+    return scaled_instance(rng, _strata(experiment, spec["episodes"])[episode])
 
 
 # --------------------------------------------------------------------------
@@ -396,8 +441,11 @@ def _check_advantages(message: dict) -> list[float]:
 def run_episode(method: Method, inst: dict, experiment: str,
                 episode: int, num_batches: int, log_handle) -> dict:
     rewards = inst["rewards"]
+    lo, span = inst["unit_offset"], inst["unit_span"]
+    units = [(r - lo) / span for r in rewards]  # what is scored (never sent)
     policy = SoftmaxPolicy(inst["initial_logits"])
     rng = random.Random(_seed(experiment, episode, "sampling"))
+    offset_rng = random.Random(_seed(experiment, episode, "offsets"))
     agent = AgentProcess(method, log_handle)
     online = 0.0
     recent: list[float] = []
@@ -412,12 +460,14 @@ def run_episode(method: Method, inst: dict, experiment: str,
             raise EpisodeFailure("agent did not answer the episode message with ready")
         for t in range(num_batches):
             actions = policy.sample(rng, BATCH_SIZE)
-            observed = [rewards[a] for a in actions]
-            online += math.fsum(observed)
-            recent.extend(observed)
+            shift = offset_rng.uniform(-GROUP_OFFSET_HALF_WIDTH, GROUP_OFFSET_HALF_WIDTH)
+            scored = [units[a] for a in actions]
+            online += math.fsum(scored)
+            recent.extend(scored)
             if len(recent) > 4000:
                 recent = recent[-1000:]
-            agent.send({"type": "batch", "index": t, "rewards": observed})
+            agent.send({"type": "batch", "index": t,
+                        "rewards": [rewards[a] + shift for a in actions]})
             adv = _check_advantages(agent.receive())
             mean = math.fsum(adv) / BATCH_SIZE
             deltas: dict[int, float] = {}
@@ -436,7 +486,7 @@ def run_episode(method: Method, inst: dict, experiment: str,
     tail = recent[-1000:]
     gp = math.fsum(probs[a] for a in inst["global_peak"])
     metrics = {
-        "expected_reward": math.fsum(p * r for p, r in zip(probs, rewards)),
+        "expected_reward": math.fsum(p * u for p, u in zip(probs, units)),
         "mean_reward_last_1000": math.fsum(tail) / len(tail),
         "online_mean_reward": online / (num_batches * BATCH_SIZE),
         "optimal_action_probability": probs[inst["optimal_arm"]],
@@ -534,6 +584,7 @@ def main() -> None:
     scores["_protocol"] = {
         "num_batches": args.num_batches, "batch_size": BATCH_SIZE,
         "learning_rate": LEARNING_RATE, "advantage_cap": ADVANTAGE_CAP,
+        "group_offset_half_width": GROUP_OFFSET_HALF_WIDTH,
         "partial_run": bool(args.methods or args.max_episodes or args.num_batches != NUM_BATCHES),
     }
     _write_json(args.output, scores)
