@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: "Calibration sweep (CPU, ~1.75 h): in-process simulator, 7 candidate hidden-scale instance distributions + paper-scale E1, 23 advantage rules (paper betas, GRPO, ported success-threshold shortcut at 9 thresholds, scale-free honest variants), paired episodes."
+notes: "Final hardening run, resumable per stage (CPU, ~2.5 h): reference set + GRPO baseline on both slices (hidden per-instance reward scales, per-group offsets), fill visible-slice E2 numbers, validate, audit (honest memory-based variants, ported/verbatim threshold shortcuts, forged/NaN/oversized/crash/helper, ground-truth edit) through the unchanged hidden test, paired-bootstrap analysis."
