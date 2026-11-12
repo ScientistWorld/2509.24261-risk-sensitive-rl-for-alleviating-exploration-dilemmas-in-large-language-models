@@ -40,8 +40,6 @@ import select
 import subprocess
 import sys
 import time
-from bisect import bisect_right
-from itertools import accumulate
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -69,13 +67,13 @@ SCALED_N_ARMS = 2 ** 18
 PEAK_HALF_WIDTH = 10
 LOCAL_NEIGHBOURHOOD = 5
 # Scaled experiment, drawn per instance (stratified over the episodes):
-P_GLOBAL_RANGE = (3e-4, 0.1)        # prior mass of the 21-arm global peak (log-uniform)
+P_GLOBAL_RANGE = (0.03, 0.3)        # prior mass of the 21-arm global peak (log-uniform)
 SPAN_RANGE = (0.3, 1.0)             # best reward minus background reward (log-uniform)
 LOCAL_RATIO_RANGE = (0.3, 0.85)     # local-peak height / span (uniform)
 
 EXPERIMENTS = {
     "bandit_escape": {"family": "paper", "episodes": 24},
-    "bandit_escape_scaled": {"family": "scaled", "episodes": 64},
+    "bandit_escape_scaled": {"family": "scaled", "episodes": 96},
 }
 
 HIGHER_IS_BETTER = {
@@ -235,56 +233,66 @@ def make_instance(experiment: str, episode: int) -> dict:
 
 
 # --------------------------------------------------------------------------
-# Softmax policy with sparse updates and exact block sums.
+# Softmax policy (segment tree: O(log n) sampling and updates).
 # --------------------------------------------------------------------------
 
 class SoftmaxPolicy:
+    """Softmax policy over the arms with a segment tree of exp-weights:
+    O(log n) sampling and updates. Each parent sum is recomputed from its two
+    children after an update, so no rounding error accumulates."""
+
     def __init__(self, logits: list[float]) -> None:
         self.n = len(logits)
-        self.block = max(16, math.isqrt(self.n))
-        self.n_blocks = (self.n + self.block - 1) // self.block
+        size = 1
+        while size < self.n:
+            size *= 2
+        self.size = size
         self.theta = list(logits)
         self._rebuild()
 
     def _rebuild(self) -> None:
         self.shift = max(self.theta)
-        self.weights = [math.exp(t - self.shift) for t in self.theta]
-        b = self.block
-        self.block_sums = [sum(self.weights[i * b:(i + 1) * b]) for i in range(self.n_blocks)]
+        size = self.size
+        tree = [0.0] * (2 * size)
+        tree[size:size + self.n] = [math.exp(t - self.shift) for t in self.theta]
+        for i in range(size - 1, 0, -1):
+            tree[i] = tree[2 * i] + tree[2 * i + 1]
+        self.tree = tree
 
     def sample(self, rng: random.Random, k: int) -> list[int]:
-        cumulative = list(accumulate(self.block_sums))
-        total = cumulative[-1]
-        out = []
+        tree, size, out = self.tree, self.size, []
         for _ in range(k):
-            u = rng.random() * total
-            blk = min(bisect_right(cumulative, u), self.n_blocks - 1)
-            u -= cumulative[blk] - self.block_sums[blk]
-            lo = blk * self.block
-            inner = list(accumulate(self.weights[lo:lo + self.block]))
-            j = min(bisect_right(inner, u), len(inner) - 1)
-            while j > 0 and self.weights[lo + j] == 0.0:
-                j -= 1
-            out.append(lo + j)
+            u = rng.random() * tree[1]
+            i = 1
+            while i < size:
+                left = tree[2 * i]
+                if (u < left and left > 0.0) or tree[2 * i + 1] == 0.0:
+                    i = 2 * i
+                else:
+                    u -= left
+                    i = 2 * i + 1
+            out.append(i - size)
         return out
 
     def apply(self, deltas: dict[int, float]) -> None:
+        theta = self.theta
         rebuild = False
         for arm, delta in deltas.items():
-            self.theta[arm] += delta
-            if self.theta[arm] - self.shift > 50.0:
+            theta[arm] += delta
+            if theta[arm] - self.shift > 50.0:
                 rebuild = True
         if rebuild:
             self._rebuild()
             return
-        dirty = set()
+        tree, size, shift = self.tree, self.size, self.shift
         for arm in deltas:
-            self.weights[arm] = math.exp(self.theta[arm] - self.shift)
-            dirty.add(arm // self.block)
-        b = self.block
-        for blk in dirty:
-            self.block_sums[blk] = sum(self.weights[blk * b:(blk + 1) * b])
-        if sum(self.block_sums) < 1e-200:
+            j = size + arm
+            tree[j] = math.exp(theta[arm] - shift)
+            j >>= 1
+            while j:
+                tree[j] = tree[2 * j] + tree[2 * j + 1]
+                j >>= 1
+        if tree[1] < 1e-200:
             self._rebuild()
 
     def probabilities(self) -> list[float]:

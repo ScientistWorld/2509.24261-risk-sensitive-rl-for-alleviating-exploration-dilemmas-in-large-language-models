@@ -27,8 +27,10 @@ pass@32 with comparable pass@1.
 ## This Gym
 
 The gym reproduces the paper's Section 5 bandit (100 arms, hidden arm
-permutations) and extends it to a 2^18-arm version where the global optimum is
-much less likely under the initial policy (the regime in which the paper
-reports its method can stay at a local optimum). Methods are advantage rules
-run by the evaluator on hidden instances. The LLM pass@k experiments are out
-of scope (CPU-only budget).
+permutations) and extends it to a 2^18-arm version. In that version every
+instance has its own hidden reward scale and local-peak height, and the
+optimum is less likely under the initial policy. This is where a fixed
+risk-sensitivity, which the paper names as a limitation, can stay at a local
+optimum. Rewards reach the method with a hidden per-group offset. Methods are
+advantage rules run by the evaluator on hidden instances. The LLM pass@k
+experiments are out of scope (CPU-only budget).

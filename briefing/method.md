@@ -31,7 +31,11 @@ sufficiently risk-seeking updates move to the global peak.
 grid plus the released bandit script's 16. The evaluator samples groups of
 N = 16 from the softmax policy and applies the paper's policy-gradient step
 (learning rate 0.1) with the returned advantages. Eq. 8 advantages sum to
-zero within a group, so the evaluator's centring leaves them unchanged.
+zero within a group, so the evaluator's centring leaves them unchanged, and
+they are invariant to the hidden per-group reward offset. On the scaled
+experiment the reward scale varies per instance, so a fixed beta acts as a
+weaker or stronger risk preference from one instance to the next (the paper
+lists choosing beta adaptively as an open problem, Appendix A).
 `rs_grpo_beta8` (the paper's RS-GRPO setting in its pass@k figure) is the
 reference every new method is ranked against. `baseline/grpo_bandit.py` is
 the standalone risk-neutral GRPO baseline.

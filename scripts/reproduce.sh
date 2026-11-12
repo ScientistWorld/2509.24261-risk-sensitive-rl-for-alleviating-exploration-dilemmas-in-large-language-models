@@ -1,5 +1,5 @@
 #!/bin/bash
-# Reproduce the gym's reference numbers end to end (CPU only, ~80 min on 1 core).
+# Reproduce the gym's reference numbers end to end (CPU only, ~30 min on 1 core).
 # Every agent on disk (paper's method variants and the GRPO baseline) is run
 # by the evaluators on the visible and, when present, the hidden slice.
 set -euo pipefail

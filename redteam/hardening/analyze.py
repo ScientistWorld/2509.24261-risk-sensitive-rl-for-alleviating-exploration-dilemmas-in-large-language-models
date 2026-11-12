@@ -74,15 +74,19 @@ def main():
     valid = {m: v for m, v in table.items() if m not in audit["failures"]}
     report["rank_valid_rows"] = rank_scores(valid, REFERENCE)
 
+    ported = sorted(m for m in valid if m.startswith("shortcut_threshold_t"))
+    best_ported = max(ported, key=lambda m: report["rank_valid_rows"][m]) if ported else None
+    report["best_ported_threshold"] = best_ported
     comparisons = [
-        ("honest_stronger_aspiration", REFERENCE),
-        ("variant_success_only", REFERENCE),
+        ("honest_memory_aspiration", REFERENCE),
+        ("honest_best_seen", REFERENCE),
         (REFERENCE, "grpo_baseline"),
         (REFERENCE, "rs_grpo_beta4"),
         (REFERENCE, "rs_grpo_beta16"),
         ("rs_grpo_beta4", "grpo_baseline"),
         ("shortcut_forged_output", REFERENCE),
-    ]
+    ] + ([(best_ported, REFERENCE)] if best_ported else [])
+    comparisons = [(a, b) for a, b in comparisons if a in valid and b in valid]
     report["paired_test"] = {}
     for a, b in comparisons:
         for exp in EXPS:
@@ -90,6 +94,32 @@ def main():
                            "optimal_action_probability"):
                 mean, se, n = paired(audit, a, b, exp, metric)
                 report["paired_test"][f"{a} - {b} | {exp} | {metric}"] = [round(mean, 4), round(se, 4), n]
+
+    # Paired bootstrap of rank differences: resample episodes (the same
+    # episodes for every method), recompute the cohort table and the ranks.
+    rng = random.Random(1)
+    n_eps = {exp: len(audit["episodes"][REFERENCE][exp]) for exp in EXPS}
+    diffs = {a: [] for a, b in comparisons if b == REFERENCE}
+    diffs["grpo_baseline"] = []
+    for _ in range(200):
+        picks = {exp: [rng.randrange(n) for _ in range(n)] for exp, n in n_eps.items()}
+        t = {}
+        for m in valid:
+            t[m] = {}
+            for exp in EXPS:
+                runs = audit["episodes"][m][exp]
+                sel = [runs[i] for i in picks[exp]]
+                t[m][exp] = {k: sum(r[k] for r in sel) / len(sel) for k in sel[0]}
+        rk = rank_scores(t, REFERENCE)
+        for m in diffs:
+            diffs[m].append(rk[m])
+    report["paired_bootstrap_rank_vs_reference"] = {}
+    for m, v in diffs.items():
+        mu = sum(v) / len(v)
+        sd = math.sqrt(sum((x - mu) ** 2 for x in v) / (len(v) - 1))
+        v.sort()
+        report["paired_bootstrap_rank_vs_reference"][m] = {
+            "mean": round(mu, 3), "sd": round(sd, 3), "p05": round(v[10], 3), "p95": round(v[189], 3)}
 
     # Reference noise: visible vs hidden slice (independent instances and seeds),
     # scored on the same cohort scale as the hidden-slice ranking.
@@ -124,6 +154,7 @@ def main():
             print(f"{k:95s} {v[0]:+.4f} ± {v[1]:.4f} (n={v[2]})")
     print("reference visible-slice score on hidden-cohort scale:", round(report["reference_visible_vs_hidden"], 3))
     print("reference bootstrap:", report["reference_bootstrap_over_episodes"])
+    print("paired bootstrap of rank vs reference:", json.dumps(report["paired_bootstrap_rank_vs_reference"], indent=1))
 
 
 if __name__ == "__main__":

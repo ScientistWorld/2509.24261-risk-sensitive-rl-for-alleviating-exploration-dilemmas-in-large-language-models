@@ -1,16 +1,16 @@
 {
   "_reference_method": "rs_grpo_beta8",
-  "_note": "Every number in scores_*.json is computed by eval/: the evaluator samples all actions, shows the agent only the rewards of each group of 16, applies the fixed softmax policy-gradient step (lr 0.1, N = 16, 7500 batches) to the advantages an agent returns, and scores the final policy on hidden instances. rs_grpo_beta8 (the paper's RS-GRPO setting for its pass@k experiments, Fig. 4, and the largest beta of its ablation grid) is the reference every future method is ranked against; the other beta values are the paper's ablation. Coefficients are magnitudes: each metric's improvement is taken in its higher_is_better direction.",
+  "_note": "Every number in scores_*.json is computed by eval/: the evaluator samples all actions, shows the agent only the rewards of each group of 16 (each group shifted by its own hidden offset, so rewards are comparable only within a group), applies the fixed softmax policy-gradient step (lr 0.1, N = 16, 7500 batches) to the advantages an agent returns, and scores the final policy on hidden instances. rs_grpo_beta8 (the paper's RS-GRPO setting for its pass@k experiments, Fig. 4, and the largest beta of its ablation grid) is the reference every future method is ranked against; the other beta values are the paper's ablation. Coefficients are magnitudes: each metric's improvement is taken in its higher_is_better direction.",
   "experiments": {
     "bandit_escape": {
-      "description": "Section 5 / Figure 3 bandit at the paper's scale: the paper's exact 100-arm bimodal reward landscape (global peak 1.0, local peak 0.6) and initial policy sharply peaked on the local peak, with arm labels permuted per hidden instance. Risk-neutral updates stay at the local peak; sufficiently risk-seeking updates (beta >= 4) reach the global peak.",
+      "description": "Section 5 / Figure 3 bandit at the paper's scale: the paper's exact 100-arm bimodal reward landscape (global peak 1.0, local peak 0.6) and initial policy sharply peaked on the local peak, with arm labels permuted per hidden instance and every group's rewards shifted by a hidden offset (the paper's advantage is shift-invariant, so this changes nothing for it). Risk-neutral updates stay at the local peak; sufficiently risk-seeking updates (beta >= 4) reach the global peak.",
       "weight": 0.4,
       "primary_metric": "expected_reward",
       "metrics": {
         "expected_reward": {
           "higher_is_better": true,
           "coefficient": 1.0,
-          "description": "Reward of the final policy averaged over all arms (pass@1 of the final policy)."
+          "description": "Reward of the final policy averaged over all arms (pass@1 of the final policy), of the paper's reward units."
         },
         "mean_reward_last_1000": {
           "higher_is_better": true,
@@ -30,7 +30,7 @@
         "global_peak_probability": {
           "higher_is_better": true,
           "coefficient": 0.8,
-          "description": "Final probability of the arms whose reward is at least 0.9."
+          "description": "Final probability of the global-peak arms whose reward is at least 0.9 (reward >= 0.9)."
         },
         "global_peak_success_rate": {
           "higher_is_better": true,
@@ -101,14 +101,14 @@
       }
     },
     "bandit_escape_scaled": {
-      "description": "Where the paper's method falls short (Sec. 6.2: the optimum is prohibitively unlikely under the initial policy). The same two reward peaks inside 2^18 arms: the initial policy keeps 45-65% of its mass on the local peak, puts an instance-dependent 0.1-15% (log-uniform) on the 21-arm global peak, hides it among similarly likely low-reward decoys, and spreads the rest over a long tail. Enumerating arms is impossible within the 120,000-interaction budget.",
+      "description": "Where the paper's method falls short: a fixed risk-sensitivity beta under an unknown reward scale (the paper's Appendix A names adaptive beta an open problem) in a large action space. Two reward peaks inside 2^18 arms; each instance has its own hidden reward scale: background reward, span from background to best arm (log-uniform 0.3-1.0) and local-peak height (uniformly 30-85% of the span). The initial policy keeps 45-65% of its mass on the local peak, puts 3-30% (log-uniform) on the 21-arm global peak, hides it among similarly likely background-reward decoys, and spreads the rest over a long tail. Every group's rewards are shifted by a hidden offset. Metrics are in the instance's normalised units (background 0, best arm 1). Enumerating arms is impossible within the 120,000-interaction budget.",
       "weight": 0.6,
       "primary_metric": "expected_reward",
       "metrics": {
         "expected_reward": {
           "higher_is_better": true,
           "coefficient": 1.0,
-          "description": "Reward of the final policy averaged over all arms (pass@1 of the final policy)."
+          "description": "Reward of the final policy averaged over all arms (pass@1 of the final policy), in normalised units (background 0, best arm 1)."
         },
         "mean_reward_last_1000": {
           "higher_is_better": true,
@@ -128,7 +128,7 @@
         "global_peak_probability": {
           "higher_is_better": true,
           "coefficient": 0.8,
-          "description": "Final probability of the arms whose reward is at least 0.9."
+          "description": "Final probability of the global-peak arms whose reward is at least 0.9 of the instance's span above the background."
         },
         "global_peak_success_rate": {
           "higher_is_better": true,
@@ -146,7 +146,7 @@
           "description": "Final probability retained in the local peak neighbourhood (offsets |d| <= 5)."
         }
       },
-      "_note": "The paper reports no numbers for this scaled setting. Its Section 5 numbers (local 0.6 for risk-neutral, global 1.0 for beta >= 4) are kept under _paper_reported_section5 for context only. 'results' holds this gym's reference reproduction on the visible slice (scripts/evaluate_train.sh), recorded so the gym's own numbers are documented; it is not a target.",
+      "_note": "The paper reports no numbers for this setting. Its Section 5 numbers (local 0.6 for risk-neutral, global 1.0 for beta >= 4) are kept under _paper_reported_section5 for context only. 'results' holds this gym's reference reproduction on the visible slice (scripts/evaluate_train.sh), recorded so the gym's own numbers are documented; it is not a target.",
       "_paper_reported_section5": {
         "grpo_beta0": {
           "expected_reward": 0.6

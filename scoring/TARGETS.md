@@ -23,7 +23,9 @@ rather than improving only by spreading probability around it?
 
 Is the escape reliable across independent episodes (shuffled arms and
 different sampling seeds, and on the scaled experiment different instances
-whose global peak ranges from likely to very unlikely)?
+with their own hidden reward scale, local-peak height and global-peak
+probability)? Scaled-experiment rewards are measured in each instance's
+normalised units (background 0, best arm 1).
 - **Metric**: `global_peak_success_rate` (higher is better).
 
 ## Efficiency: bandit_escape, bandit_escape_scaled

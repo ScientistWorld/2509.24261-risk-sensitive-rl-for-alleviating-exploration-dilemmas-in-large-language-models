@@ -29,5 +29,7 @@ learned baselines over reward histories.
 - Changing the instances, the budget, the learning rate, the update rule or
   the advantage cap; editing the evaluators.
 - Writing score files or printing results in place of the evaluator.
+- Inferring the hidden per-group offsets or instance scales from anything
+  other than the rewards the evaluator sends.
 - Tuning a method to the visible slice's specific instances instead of the
   instance distribution.

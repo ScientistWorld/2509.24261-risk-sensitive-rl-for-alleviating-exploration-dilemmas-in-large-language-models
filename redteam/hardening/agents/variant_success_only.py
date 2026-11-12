@@ -1,4 +1,4 @@
-"""Reward-only analogue of 'sample from the prior, then commit': reinforce only
+"""The shortcut REVIEW.md flagged, run verbatim. Reward-only analogue of 'sample from the prior, then commit': reinforce only
 samples that reach the success threshold (reward >= 0.9) with the maximal
 advantage, give everything else -1. Groups without a success leave the policy
 unchanged (after centring), so the initial policy keeps sampling until the

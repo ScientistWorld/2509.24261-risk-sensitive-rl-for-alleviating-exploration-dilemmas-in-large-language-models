@@ -8,7 +8,9 @@ give them a leading underscore.
 
 The evaluator owns the bandit, the sampling of actions and the policy update.
 An agent only decides the *advantage* of every sample in a group, from the
-group's rewards (as in RLVR, it is never told which arm produced a reward)::
+group's rewards (as in RLVR, it is never told which arm produced a reward).
+Every group's rewards are shifted by one hidden offset, drawn uniformly from
+[-2, 2] per group, so rewards are comparable only within a group::
 
     evaluator -> agent   {"type": "episode", "n_arms": K, "batch_size": N,
                           "num_batches": T, "learning_rate": lr,

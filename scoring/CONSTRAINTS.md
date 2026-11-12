@@ -2,9 +2,11 @@
 
 ## Problem
 
-Instances, the initial policy, the interaction budget (7,500 groups of 16),
-the learning rate (0.1), the softmax policy-gradient update, the advantage
-cap (|A| <= 8) and the episode counts are fixed by the evaluators in `eval/`.
+Instances (including their hidden reward scales), the hidden per-group
+reward offsets, the initial policy, the interaction budget (7,500 groups of
+16), the learning rate (0.1), the softmax policy-gradient update, the
+advantage cap (|A| <= 8) and the episode counts are fixed by the evaluators
+in `eval/`.
 A method cannot change them: it only returns advantages for the groups the
 evaluator samples. `data/bandit_instances.py` is a visible copy of the
 instance generators for development. Editing it does not change scoring.

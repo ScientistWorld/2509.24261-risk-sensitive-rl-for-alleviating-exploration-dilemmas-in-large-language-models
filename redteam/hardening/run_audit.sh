@@ -21,7 +21,7 @@ bash scripts/evaluate_test.sh > "$H/out/audit_test.log" 2>&1; echo "audit test e
 cp scoring/scores_test.json "$H/out/audit_scores_test.json"
 cp logs/eval_test_details.json "$H/out/audit_test_details.json"
 python eval/train/bandit_eval.py \
-  --methods honest_stronger_aspiration,variant_success_only \
+  --methods honest_memory_aspiration,honest_best_seen,shortcut_threshold_t0.3,variant_success_only \
   --output "$H/out/audit_scores_train.json" --details "$H/out/audit_train_details.json" \
   > "$H/out/audit_train.log" 2>&1; echo "audit train exit code $?" | tee -a "$H/out/audit_train.log"
 # restore
