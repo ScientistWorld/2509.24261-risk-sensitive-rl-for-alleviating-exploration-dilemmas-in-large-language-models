@@ -164,69 +164,69 @@
       "results": {
         "grpo_baseline": {
           "type": "baseline",
-          "expected_reward": 0.5972,
-          "mean_reward_last_1000": 0.5972,
-          "online_mean_reward": 0.5485,
-          "optimal_action_probability": 0.0,
-          "global_peak_probability": 0.0001,
-          "global_peak_success_rate": 0.0,
-          "local_action_probability": 0.9186,
-          "local_peak_probability": 0.9959
+          "expected_reward": 0.7132,
+          "mean_reward_last_1000": 0.7131,
+          "online_mean_reward": 0.5659,
+          "optimal_action_probability": 0.0624,
+          "global_peak_probability": 0.2824,
+          "global_peak_success_rate": 0.2812,
+          "local_action_probability": 0.6391,
+          "local_peak_probability": 0.6879
         },
         "grpo_beta0": {
           "type": "baseline",
-          "expected_reward": 0.5972,
-          "mean_reward_last_1000": 0.5972,
-          "online_mean_reward": 0.5485,
-          "optimal_action_probability": 0.0,
-          "global_peak_probability": 0.0001,
-          "global_peak_success_rate": 0.0,
-          "local_action_probability": 0.9186,
-          "local_peak_probability": 0.9959
+          "expected_reward": 0.7132,
+          "mean_reward_last_1000": 0.7131,
+          "online_mean_reward": 0.5659,
+          "optimal_action_probability": 0.0624,
+          "global_peak_probability": 0.2824,
+          "global_peak_success_rate": 0.2812,
+          "local_action_probability": 0.6391,
+          "local_peak_probability": 0.6879
         },
         "rs_grpo_beta2": {
           "type": "proposed",
-          "expected_reward": 0.6045,
-          "mean_reward_last_1000": 0.6043,
-          "online_mean_reward": 0.5505,
-          "optimal_action_probability": 0.0,
-          "global_peak_probability": 0.0208,
-          "global_peak_success_rate": 0.0208,
-          "local_action_probability": 0.9277,
-          "local_peak_probability": 0.9734
+          "expected_reward": 0.7565,
+          "mean_reward_last_1000": 0.7566,
+          "online_mean_reward": 0.6014,
+          "optimal_action_probability": 0.0928,
+          "global_peak_probability": 0.3887,
+          "global_peak_success_rate": 0.3958,
+          "local_action_probability": 0.5499,
+          "local_peak_probability": 0.5919
         },
         "rs_grpo_beta4": {
           "type": "proposed",
-          "expected_reward": 0.6266,
-          "mean_reward_last_1000": 0.6263,
-          "online_mean_reward": 0.5605,
-          "optimal_action_probability": 0.0207,
-          "global_peak_probability": 0.0826,
-          "global_peak_success_rate": 0.0833,
-          "local_action_probability": 0.8736,
-          "local_peak_probability": 0.9096
+          "expected_reward": 0.7882,
+          "mean_reward_last_1000": 0.7882,
+          "online_mean_reward": 0.6234,
+          "optimal_action_probability": 0.1202,
+          "global_peak_probability": 0.4618,
+          "global_peak_success_rate": 0.4688,
+          "local_action_probability": 0.4778,
+          "local_peak_probability": 0.5171
         },
         "rs_grpo_beta8": {
           "type": "proposed",
-          "expected_reward": 0.6559,
-          "mean_reward_last_1000": 0.6557,
-          "online_mean_reward": 0.5649,
-          "optimal_action_probability": 0.0613,
-          "global_peak_probability": 0.1637,
-          "global_peak_success_rate": 0.1667,
-          "local_action_probability": 0.8015,
-          "local_peak_probability": 0.8232
+          "expected_reward": 0.833,
+          "mean_reward_last_1000": 0.8324,
+          "online_mean_reward": 0.6386,
+          "optimal_action_probability": 0.1529,
+          "global_peak_probability": 0.5928,
+          "global_peak_success_rate": 0.6042,
+          "local_action_probability": 0.346,
+          "local_peak_probability": 0.381
         },
         "rs_grpo_beta16": {
           "type": "proposed",
-          "expected_reward": 0.644,
-          "mean_reward_last_1000": 0.6431,
-          "online_mean_reward": 0.5212,
-          "optimal_action_probability": 0.0528,
-          "global_peak_probability": 0.1574,
-          "global_peak_success_rate": 0.1667,
-          "local_action_probability": 0.7756,
-          "local_peak_probability": 0.8106
+          "expected_reward": 0.8375,
+          "mean_reward_last_1000": 0.8373,
+          "online_mean_reward": 0.5874,
+          "optimal_action_probability": 0.2061,
+          "global_peak_probability": 0.6299,
+          "global_peak_success_rate": 0.6667,
+          "local_action_probability": 0.2723,
+          "local_peak_probability": 0.314
         }
       }
     }
