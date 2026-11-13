@@ -5,9 +5,9 @@
 # audit (honest variants and shortcuts through the unchanged hidden test,
 # restoring every file it touches) and its analysis.
 #
-# Each stage leaves a marker in logs/job_state/ when it completes, so a
-# restarted job resumes at the first unfinished stage. Delete that folder
-# (or run with FRESH=1) to rerun everything.
+# Each stage leaves a marker in logs/job_state/ (gitignored) when it
+# completes, so a restarted job resumes at the first unfinished stage. A fresh
+# clone has no markers and runs everything; elsewhere use FRESH=1.
 set -euo pipefail
 cd /home/user
 export PYTHONPATH="/home/user:${PYTHONPATH:-}"
@@ -27,5 +27,10 @@ stage train bash -c 'bash scripts/evaluate_train.sh 2>&1 | tee logs/reproduce_tr
 stage test bash -c 'bash scripts/evaluate_test.sh 2>&1 | tee logs/reproduce_test.log'
 python redteam/hardening/fill_reference.py
 python validate.py --compare || echo "validate.py reported problems (see above)"
+# A fresh audit (not a resumed one) starts from the clean run just made.
+if [ ! -f "$STATE/audit.started" ]; then
+  rm -rf redteam/hardening/out/chunks redteam/hardening/out/clean_*
+  touch "$STATE/audit.started"
+fi
 stage audit bash redteam/hardening/run_audit.sh
 python redteam/hardening/analyze.py | tee redteam/hardening/out/analysis.log

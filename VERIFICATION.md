@@ -1,4 +1,4 @@
-> Superseded by `HARDENING.md` (iteration 11): the artifact-based evaluator described below was replaced by evaluator-run agents on hidden instances.
+> Superseded by `HARDENING.md` (final hardening iteration): the artifact-based evaluator described below was replaced by evaluator-run agents on hidden instances.
 
 # Verification Report
 

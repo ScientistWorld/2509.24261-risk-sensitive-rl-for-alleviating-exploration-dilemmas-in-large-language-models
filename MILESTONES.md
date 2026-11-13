@@ -40,3 +40,12 @@
 
 ## Stop Justification
 - Completed at milestone `core_claim_plus`.
+
+### [2026-11-13] - core_claim_plus
+- Final hardening (REVIEW.md item): hidden per-group reward offsets on both experiments. On the scaled experiment, hidden per-instance reward span and local-peak height, with the optimum's initial mass recalibrated to 3-30% from an 8-distribution x 23-rule calibration sweep.
+- Shortcut scores:
+  - The public-scale success-threshold shortcut fell from +6.20 to -5.92 (verbatim).
+  - Its best port to the new protocol scores -0.94.
+- Honest scale-free memory-based variants score +5.3 and +5.8; GRPO scores -6.9.
+- The paper's claim reproduces on both slices: E2 success rises from 0.27 (GRPO) to 0.56 (beta 8), and E1 is unchanged.
+- The reference and baselines were rerun from the final code; the audit ran through the unchanged hidden test.

@@ -1,5 +1,16 @@
 # Progress
 
+**Current state (final hardening iteration):** see `HARDENING.md`. Agents
+(advantage rules) are run by `eval/{train,test}/bandit_eval.py` on hidden
+instances of two experiments:
+
+- `bandit_escape`: the paper's 100-arm bandit, permuted.
+- `bandit_escape_scaled`: 2^18 arms, with a hidden reward scale and
+  local-peak height per instance.
+
+Every group's rewards reach the agent shifted by a hidden offset. The earlier
+sections below describe previous pipelines and are kept for history.
+
 **Current state (iteration 11, hardening):** see `HARDENING.md`. The gym now
 runs agents (advantage rules) through `eval/{train,test}/bandit_eval.py` on
 hidden instances of two experiments: `bandit_escape` (the paper's 100-arm

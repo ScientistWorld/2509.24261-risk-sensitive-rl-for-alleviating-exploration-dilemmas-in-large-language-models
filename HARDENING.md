@@ -1,228 +1,308 @@
-# Hardening report (iteration 11)
+# Hardening report (final iteration)
 
-## Summary
+This iteration fixes the one weakness `REVIEW.md` listed after the previous
+hardening:
 
-The previous gym scored a saved artifact. That artifact contained the method's
-own final policy and reward history, computed on a public 100-arm instance.
-`REDTEAM.md` showed that visible answers, enumeration, forged reward tails,
-edited ground truth, duplicated seeds and unscored methods all paid.
+> A five-line success-threshold advantage rule that uses the public reward
+> scale scores +6.2 over the reference, more than twice the best honest
+> variant (+2.67).
 
-I replaced the artifact pipeline instead of patching it.
+It then reruns the reference, the baselines and the full shortcut audit from
+the final code.
 
-**The hidden test now runs the method itself.** It does this on bandit
-instances that exist only inside `eval/test/bandit_eval.py`, generated from
-secret seed material:
+## What changed
 
-- The evaluator samples every group of 16 actions from the current policy.
-- The method sees only the group's 16 rewards, never which arms were played,
-  as in RLVR where a sampled response essentially never recurs.
-- The method returns 16 advantages. The evaluator checks them (finite,
-  |A| <= 8), centres them, and applies the paper's softmax policy-gradient
-  step (lr 0.1, 7,500 groups = 120,000 interactions).
-- The evaluator computes every metric from its own sampling record and the
-  final policy.
+**1. Hidden per-group reward offsets (both experiments).** Each group's 16
+rewards reach the method shifted by one hidden offset, drawn U(-2, 2) per
+group. Rewards are therefore comparable only within a group.
 
-A method is therefore exactly what the paper contributes: an advantage rule
-(Eq. 8 is "a drop-in replacement for the advantage calculation").
+- This removes absolute thresholds such as "reward >= 0.9 is a success".
+- It also removes "reward value = arm identity" across groups (previously left
+  shortcut 3).
+- The paper's advantage (Eq. 8) and GRPO are exactly invariant to such a
+  shift. On the paper-scale experiment every reference number equals the
+  previous gym's to within 1e-16 (floating-point rounding).
 
-**Why the cap never binds the paper's method.** Eq. 8 advantages always lie
-in (-1/beta, min((e^beta - 1)/beta, (N - 1)/beta)], so they never exceed
-about 5.4 for any beta. GRPO advantages are at most 1.
+**2. Hidden per-instance reward scale and success level (scaled experiment,
+`bandit_escape_scaled`).** Each instance draws three things:
 
-**Two scored experiments:**
+- a background reward;
+- a span from background to the best arm, log-uniform in [0.3, 1.0];
+- a local-peak height, uniform in [30%, 85%] of the span.
 
-- `bandit_escape` (weight 0.4): the paper's exact Section 5 bandit (100 arms,
-  same rewards, same initial logits), with the arm labels permuted in each of
-  24 hidden episodes.
-- `bandit_escape_scaled` (weight 0.6): the same two reward peaks inside
-  2^18 arms, over 48 hidden episodes. The initial policy keeps 45-65% of its
-  mass on the local peak. It puts a log-uniform 0.1-15% on the 21-arm global
-  peak, hidden among similarly likely low-reward decoys, and spreads the rest
-  over a long tail. This is the regime where the paper says its method can
-  stay at a local optimum (Sec. 6.2). It is the experiment with headroom.
+The success level is therefore not knowable in advance (fixes previously left
+shortcut 4). Metrics are reported in each instance's normalised units:
+background 0, best arm 1.
 
-Train and test share no code. The test imports nothing from `data/`,
-`method/` or `eval/train/`. `scripts/evaluate_test.sh` takes no arguments and
-scores every top-level, non-underscore `*.py` file in `method/` and
-`baseline/`.
+This is also a regime the paper names as its own limitation: a fixed β whose
+effective strength depends on the reward scale. Appendix A calls choosing β
+adaptively an open problem.
 
-**Reference method.** `rs_grpo_beta8`, the paper's RS-GRPO setting for its
-pass@k curves (Fig. 4) and the largest beta of its ablation grid. The previous
-reference was `rs_grpo_beta4`. It is recorded as `_reference_method` in
-`scoring/reference.json`. Beta 2, 4 and 16 are scored as the paper's ablation.
+**3. Recalibrated optimum rarity on the scaled experiment.** The global peak's
+initial mass is now log-uniform in [3%, 30%], previously [0.1%, 15%].
 
-**How the numbers here were produced.** Two CPU jobs ran everything,
-`0182d678-1d5` and `1f9a741c-44e`; each used 1 core.
+- When the optimum is extremely rare, any rule that refuses to reinforce
+  anything until it sees a large jump beats the memoryless reference. That
+  includes a fixed threshold tuned to the public distribution of scales.
+- A calibration sweep showed this. It covered 8 candidate distributions × 23
+  advantage rules, on paired episodes (`redteam/hardening/calibration/`).
+  - In every candidate distribution whose optimum could be rarer than 1%,
+    the best fixed-threshold rule stayed +1.3 to +4.6 above the reference,
+    even with hidden scales.
+  - Hidden offsets alone, with the old fixed scale, still left it at +4.4.
+  - Only with the optimum at ≥ 3% did the threshold rule fall below the
+    reference, while honest scale-free methods kept a large margin.
 
-- **Job 2 (final protocol).** It reran the reference set on both slices, then
-  ran the audit through the unchanged `scripts/evaluate_test.sh` with no
-  arguments, every agent installed as an ordinary method file.
-- **Normalized scores.** These follow the ranking rule. For each experiment
-  and metric, the improvement over `rs_grpo_beta8` is taken in the metric's
-  better direction, divided by the metric's standard deviation across the
-  audited cohort, and multiplied by |coefficient| × experiment weight. The
-  cohort is the 9 valid rows unless stated. Code: `redteam/hardening/analyze.py`;
-  output: `redteam/hardening/out/analysis.json`.
+**4. Faster, equally exact sampler.** The softmax sampler is now a segment
+tree, giving O(log n) sampling and updates. Each parent sum is recomputed from
+its children, so no rounding error drifts. It samples the same cumulative
+order as before. This let the scaled experiment grow to 96 stratified
+episodes per slice, up from 48.
+
+**5. Audit and documentation.**
+
+- The audit agents are rewritten for the new protocol.
+- The audit runs as per-agent chunks of the unchanged hidden-test evaluator,
+  so it can resume after scheduler restarts.
+- `briefing/`, the `scoring/*.md` files, `data/bandit_instances.py` (the
+  visible generator copy) and `data/agent_protocol.py` now describe the
+  offsets and hidden scales.
+- The paper's reported numbers in `scoring/reference.json` are unchanged.
+
+Unchanged:
+
+- The paper's method (`method/rs_grpo_bandit.py`) and the GRPO baseline.
+- The reference (`rs_grpo_beta8`).
+- The update rule, the budget (7,500 groups of 16), the learning rate, the
+  advantage cap, the metrics and their coefficients.
+- The weights: `bandit_escape` 0.4, `bandit_escape_scaled` 0.6.
+
+## How the numbers were produced
+
+- **Reference runs.** Job `68b4155d-842` ran the reference set on both slices
+  with no arguments (`scripts/evaluate_{train,test}.sh`).
+- **Audit.** Job `ee3b5bf9-f72` ran every audit agent through the unchanged
+  hidden-test evaluator:
+  - the visible ground truth in `data/` was edited first;
+  - every agent was installed as an ordinary method file;
+  - a forged score file was pre-placed where the test writes.
+- **Ranking.** "Rank" follows the gym's rule. For each experiment and metric:
+  improvement over `rs_grpo_beta8` in the better direction ÷ the metric's SD
+  across the audited valid rows × |coefficient| × experiment weight.
+- **Noise.** Uncertainties come from a paired bootstrap over episodes: every
+  method uses the same resampled hidden episodes.
+- **Evidence:**
+  - `redteam/hardening/out/` (`analysis.json`, `analysis.log`,
+    `audit_scores_*.json`, `compare.log`);
+  - the calibration sweep in `redteam/hardening/calibration/`;
+  - the previous audit in `redteam/hardening/out_prev/`.
 
 ## Do better results score higher?
 
-**Before (old gym, from REDTEAM.md).** The stronger variant beat the
-reference by +0.345 normalized units against a seed spread of 0.247. That
-variant was a tabular critic with natural policy gradient and early entropy.
-The weaker variant (risk sensitivity removed) scored -8.94. But the test was
-near saturation: the stronger variant reached about 1.0 on every metric.
+Yes, on both slices and well beyond the test's noise.
 
-**After (hidden test).**
+**Hidden test, after.**
 
-| Method | E1 expected reward | E1 online | E2 expected reward | E2 success | E2 optimal-arm prob. | Normalized |
-|---|---:|---:|---:|---:|---:|---:|
-| Honest stronger: aspiration advantage | 0.998 | 0.891 | 0.752 | 0.479 | 0.292 | **+2.67** |
-| Reference `rs_grpo_beta8` | 0.980 | 0.775 | 0.699 | 0.292 | 0.082 | 0 |
-| `rs_grpo_beta16` | 0.963 | 0.657 | 0.691 | 0.292 | 0.100 | -0.42 |
-| `rs_grpo_beta4` | 0.987 | 0.745 | 0.673 | 0.188 | 0.103 | -0.68 |
-| `rs_grpo_beta2` | 0.596 | 0.547 | 0.629 | 0.083 | 0.041 | -5.92 |
-| Weaker: GRPO (`grpo_baseline` = `grpo_beta0`) | 0.598 | 0.554 | 0.597 | 0.000 | 0.000 | **-6.81** |
+| Method | E1 ER | E1 online | E1 opt-arm | E2 ER | E2 success | E2 online | E2 opt-arm | Rank (paired-bootstrap SD) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Honest: memory aspiration | 0.998 | 0.890 | 0.997 | 0.991 | 1.000 | 0.842 | 0.634 | **+5.83** (0.47) |
+| Honest: best-seen elitism | 0.986 | 0.963 | 0.210 | 0.987 | 1.000 | 0.959 | 0.354 | **+5.33** (0.51) |
+| `rs_grpo_beta16` (paper grid) | 0.963 | 0.657 | 0.753 | 0.837 | 0.708 | 0.585 | 0.228 | +0.91 |
+| **Reference `rs_grpo_beta8`** | 0.980 | 0.775 | 0.492 | 0.811 | 0.562 | 0.631 | 0.153 | 0 |
+| `rs_grpo_beta4` | 0.987 | 0.745 | 0.616 | 0.780 | 0.469 | 0.616 | 0.114 | -0.88 |
+| `rs_grpo_beta2` | 0.596 | 0.547 | 0.000 | 0.746 | 0.365 | 0.595 | 0.082 | -5.82 |
+| Weaker: GRPO (`grpo_baseline`) | 0.598 | 0.554 | 0.000 | 0.696 | 0.271 | 0.556 | 0.053 | **-6.92** (0.43) |
 
-The honest stronger variant is `redteam/hardening/agents/honest_stronger.py`.
-It applies the same exponential utility as Eq. 8 (beta 8), but measures each
-sample against the known best attainable reward 1.0 instead of the group's
-soft value. It uses only the group's rewards.
+E1 is `bandit_escape`, E2 `bandit_escape_scaled`. ER is expected reward;
+opt-arm is the optimal-arm probability.
 
-Its gain is larger than the test's noise. Paired per-episode differences on
-the same hidden instances and sampling seeds (mean ± standard error):
+**Before (previous gym, from the previous `HARDENING.md`).** The honest
+aspiration variant scored +2.67, beta 16 -0.42, beta 4 -0.68, beta 2 -5.92 and
+GRPO -6.81.
 
-- **E1:** expected reward +0.018 ± 0.002; online reward +0.116 ± 0.003;
-  optimal-arm probability +0.42 ± 0.10.
-- **E2:** expected reward +0.052 ± 0.025; success +0.19 ± 0.06; optimal-arm
-  probability +0.21 ± 0.06. Online reward is -0.012 ± 0.020, within noise.
+The honest variants keep only the group's rewards and a memory of earlier
+groups. They need no knowledge of the reward scale, the success level or the
+generator (`redteam/hardening/agents/honest_*.py`). Both reach the optimum on
+every hidden episode.
+
+They still sit below the bound on two metrics:
+
+- **Precision:** E2 optimal-arm probability is 0.63 at best.
+- **Speed:** online reward is 0.96 at best.
+
+Each trades one of these for the other, so a method that is both fast and
+precise has room above them.
+
+**Paired per-episode differences vs the reference** (hidden test, mean ± SE):
+
+| Comparison | Experiment | Expected reward | Success |
+|---|---|---:|---:|
+| Memory aspiration − reference | E2 (n = 96) | +0.180 ± 0.020 | +0.44 ± 0.05 |
+| Memory aspiration − reference | E1 (n = 24) | +0.019 ± 0.002 | — |
+| Reference − GRPO | E1 | +0.382 ± 0.002 | +1.00 |
+| Reference − GRPO | E2 | +0.115 ± 0.021 | +0.29 ± 0.05 |
 
 **Test noise.**
 
-- **Bootstrap over episodes.** Resampling the reference's 72 hidden episodes
-  gives a normalized SD of 0.80, with 5–95% bounds of -1.29 to +1.32.
-- **Visible-slice replicate.** The reference's visible-slice result (different
-  instances and seeds), placed on the same cohort scale, is -1.26.
+- Bootstrap of the reference's own hidden score: SD 0.48, 5–95% range
+  [-0.78, +0.82].
+- The reference's visible-slice result on the same scale: +0.58.
 
 **Comparisons against that noise:**
 
-- **Paper's effect:** reference vs GRPO is 6.8, far larger than the noise.
-- **Stronger variant:** +2.67, also larger.
-- **Paper's own beta variants:** beta 4 and 16 are within noise of beta 8, as
-  Lemma 4 predicts for too-large beta.
+- **Paper's effect:** reference vs GRPO is 6.9, about 16 SD.
+- **Honest improvements:** +5.3 and +5.8, each more than 10 paired SD.
 
-**Train/test agreement.** The method ordering is the same on both slices. The
-visible slice draws slightly harder E2 instances, so every honest method is
-about 0.04–0.06 lower there. Reference E2 expected reward is 0.656 visible vs
-0.699 hidden; the stronger variant 0.707 vs 0.752.
+**Train/test agreement.** The visible slice gives the same ordering:
+
+| Method | Visible-slice rank |
+|---|---:|
+| Memory aspiration | +5.04 |
+| Best-seen elitism | +4.63 |
+| β16 | +0.12 |
+| Reference | 0 |
+| Ported threshold (t0.3) | -1.08 |
+| β4 | -1.25 |
+| Success-only (verbatim) | -5.72 |
+| β2 | -5.76 |
+| GRPO | -6.85 |
+
+Reference E2 numbers, visible vs hidden: expected reward 0.833 vs 0.811,
+success 0.60 vs 0.56.
 
 ## Shortcuts: fix, and score before and after
 
-"Before" scores are from `REDTEAM.md` (old gym). In that report Δ means the
-normalized difference from the old reference within its 22-row cohort.
-"After" scores are from the final audit run. The evidence lives in
-`redteam/hardening/out/`:
-
-- `audit_scores_test.json`: test scores of every audited agent.
-- `audit_checks.json`: the identity and forged-file checks.
-- `analysis.json`: the normalized scores and paired comparisons.
+"Before" scores are the previous gym's hidden test, in the same normalised
+rank units. "After" scores are this audit's hidden test.
 
 | Shortcut | Fix | Before | After |
 |---|---|---|---|
-| Visible answers (argmax of the public landscape) | Hidden instances: arm permutation and scaled-instance layout come from secret seed material in `eval/test/`. The method never sees arm identities or initial logits. | Works, Δ +0.245 | Not expressible. The v1 answer-lookup agent scored 1.000 on train but tied the reference on test (E1 0.980, E2 0.776); it cannot run under the final protocol. |
-| Brute-force enumeration | Evaluator samples all actions and applies the update; advantages capped. 2^18-arm scaled experiment. Final protocol hides arm identities. | Works (100 queries), Δ +0.245 | With arm identities visible (job 1), a count-based "push down seen arms, then commit" agent reached the bound on both experiments: expected reward 1.000 and success 1.000 on all 48 scaled episodes. That is what led to the reward-only protocol. In the final protocol it cannot be expressed. Its reward-only analogue, success-only, is reported below as an honest variant. |
-| Forged reward tail, forged summaries, impossible values | Every metric is computed by the evaluator. Metric values outside [0, 1] fail the run. | Works, Δ +1.739 | `shortcut_forged_output` (reference advantages plus forged fields in every reply and on stderr) is identical to the reference: normalized 0, paired difference exactly 0. |
-| Ground-truth edit or relabel in `data/` | `eval/test/` holds its own private generator; nothing is read from `data/`. | Works, Δ +4.688 / +0.245 | After rescaling and relabelling `data/bandit_instances.py` and `data/bandit_spec.py` before the test, all 12 reference rows were bit-identical to the clean run. |
-| Duplicated seeds, cherry-picked runs | Evaluator chooses every instance and sampling seed. Each episode runs in a fresh process. | Works, Δ +0.206 | Not expressible. |
-| Stale checkpoint, train-filtered method list, disabled baseline | Test runs every agent file on disk; reads no checkpoints or train scores; reruns `baseline/grpo_bandit.py`. | Tie (pays) | A non-protocol file left in `method/` is scored as failed, worst everywhere (normalized -8.30 in the all-rows cohort), not skipped. |
-| Non-finite output | NaN or inf advantage fails the run. | Accepted (exit 0) | `shortcut_nan_advantage`: failed, worst on all 16 metric entries. |
-| Empty, null or missing outputs (test exited, nothing written) | Any agent failure gives the worst value on every metric of every experiment; the score file is always written. | No score, missing values cost nothing | `shortcut_crash`: failed, worst everywhere (-8.30). |
-| Instant commit by huge steps (new) | Advantage cap \|A\| <= 8. | n/a | `shortcut_oversized_advantage` (reference × 100): failed, worst everywhere. |
-| Forged or stale score file left where the test writes | Evaluator deletes the output at start and writes it atomically at the end. | Conditional | A forged `forged_method` entry written before the run did not survive. |
+| **Success-threshold rule using the public scale** (`variant_success_only`, REVIEW.md) | Per-group offsets make absolute thresholds meaningless; per-instance hidden span and local height make no fixed threshold separate the two peaks. | **+6.20** | Verbatim: **-5.92** (E2 expected reward 0.709, success 0.29; E1 stuck at 0.595). |
+| **Same rule ported to the offsets**, with the best fixed threshold for the public scale distribution | Hidden span 0.3–1 and local height 30–85% of the span, with the optimum at ≥ 3% so the reference escapes often. | n/a (would have tied the old rule) | Best threshold t0.3: **-0.94** (paired-bootstrap SD 0.68, 5–95% [-2.09, +0.19]). The other thresholds score -1.09 to -3.54. |
+| Previous honest variant, which assumed the known best reward 1.0 (`old_aspiration_known_scale`) | Same as above: the scale is no longer known. | +2.67 (counted as honest then) | -6.77 |
+| Reward value as arm identity across groups | Per-group offsets. | Left (no score) | Not expressible: values are comparable only within a group. |
+| Forged self-reported results in every reply and on stderr | Evaluator computes every metric. | 0 (tie) | 0, bit-identical to the reference. |
+| Visible ground-truth edit in `data/` | `eval/test/` has its own generator. | No effect | No effect: all 12 reference rows bit-identical to the clean run (`compare.log`). |
+| Forged score file left where the test writes | Evaluator deletes its output first. | Did not survive | Did not survive. |
+| Crash / NaN / over-cap advantage / non-protocol file in `method/` | Run is failed, worst value on every metric of both experiments. | Worst (-8.30) | Worst (-10.09 in the all-rows cohort). |
 
-## Shortcuts left, and why
+**Visible answers, enumeration, duplicated seeds, stale checkpoints** stay
+closed by the previous iteration's design:
 
-1. **A simple success-threshold rule outranks the paper's method.**
-   `variant_success_only` gives +8 to samples with reward >= 0.9 and -1 to
-   everything else. It never reinforces the local peak, so the initial
-   policy keeps sampling until the optimum turns up.
-   - Hidden test: normalized +6.20. E2 expected reward 0.890 and success
-     0.896, against 0.699 / 0.292 for the reference. E1 expected reward is
-     0.966, below the reference's 0.980, and optimal-arm probability 0.167
-     vs 0.492.
-   - It is not at the bound: it fails about 10% of hidden scaled episodes,
-     and there its expected reward drops to about 0.27.
-   - I widened E2's difficulty range from 1–15% to 0.1–15% so that no simple
-     rule reaches the bound, but I did not suppress it. It is an honest,
-     genuinely better advantage rule for a single-instance deterministic
-     bandit. Any rule that doesn't erode the initial policy before sampling
-     the optimum benefits, and it relies on the publicly known reward scale.
-   - The consequence: a future agent that copies this rule outranks the
-     reference without new research. The fix would be to hide the reward
-     scale or target level. That changes the paper's [0, 1] reward setting,
-     which its beta values assume, so I left it.
-2. **Reading `eval/test/` from disk at test time.** An agent process runs as
-   the same user on the same filesystem, so I cannot hide the evaluator's
-   source or seed material from it. This is out of bounds in
+- hidden instances generated only in `eval/test/`;
+- no arm identities shown to the method;
+- 2^18 arms, which the 120,000-interaction budget cannot enumerate;
+- every seed chosen by the evaluator.
+
+## Shortcuts and weaknesses left, and why
+
+1. **Short memory-based rules score far above the reference.**
+   `honest_best_seen` is about five lines. It remembers the best
+   within-group-anchored reward and gives +8 near it and -1 elsewhere, and it
+   scores +5.3.
+
+   I classify it as an honest method, not a shortcut:
+   - it uses no public constant, no scale and no generator knowledge;
+   - it is a generic elitist rule;
+   - "memory of rewards seen in earlier groups" is explicitly in scope in
+     `scoring/DIRECTION.md`.
+
+   Its gain is the paper's own weakness in this setting: a memoryless,
+   group-relative advantage keeps reinforcing the local mode in groups where
+   the optimum is absent.
+
+   It reaches the success bound (1.0) on both experiments and expected
+   reward 0.99. It does not reach the bound on optimal-arm probability (0.21
+   on E1, 0.35 on E2), and the dense memory-aspiration variant outranks it.
+   Still, a reviewer who counts any short rule above the paper's method as a
+   flaw will see this one. I could not find a task setting in which
+   group-memory rules do not beat a memoryless advantage while the paper's
+   claim still holds.
+
+2. **The ported threshold rule is below the reference, but not far.** Its
+   upper 95% bootstrap bound is +0.19. Tuned to the public scale
+   distribution, it ranks -0.94 on average, about 1.4 SD below.
+   - Lowering the optimum's minimum mass further raises it above the
+     reference (calibration: +1.2 at ≥ 1%, +2.6 at ≥ 0.03%).
+   - Raising it further brings the honest methods to the bound.
+
+   3% is the compromise.
+3. **`rs_grpo_beta16` ranks +0.91 above the reference on the hidden test**,
+   but only +0.12 on the visible slice. This is the paper's own β grid; a
+   larger β partly compensates for smaller hidden reward spans. I kept β = 8,
+   the paper's setting for its main pass@k results, as the reference.
+4. **Reading `eval/test/` from disk at test time** is still physically
+   possible: same user, same filesystem. It is out of bounds in
    `scoring/DIRECTION.md` and left to the shortcut grader.
-3. **Reward value as arm identity.** Each arm of the two peaks has a distinct
-   deterministic reward, so a method can recognise "the same arm" by its
-   reward and keep reinforcing it. This stays inside advantage design and
-   cannot enumerate the background, which all shares one reward value. Left.
-4. **Knowledge of the reward scale** (maximum 1.0, success threshold 0.9) is
-   public and used by both variants above. Left, as domain knowledge.
 
 ## Reference score before and after
 
-- **Before:** old test, `rs_grpo_beta4`. Expected reward 0.990, last-1000
-  reward 0.989, optimal-arm probability 0.789, success 1.0.
-- **After:** `rs_grpo_beta8` on the hidden test.
-  - E1: expected reward 0.980, online reward 0.775, optimal-arm probability
-    0.492, success 1.0.
-  - E2: expected reward 0.699, online 0.598, optimal-arm probability 0.082,
-    success 0.292.
-  - `rs_grpo_beta4` under the same test: E1 0.987, E2 0.673.
+**Before:** `rs_grpo_beta8` on the previous hidden test.
 
-The paper's claim reproduces in the paper's direction on both experiments
-and both slices:
+- E1: expected reward 0.980, success 1.0.
+- E2: expected reward 0.699, success 0.29, at the old fixed scale with the
+  optimum at 0.1–15%.
 
-- Beta 0 and 2 stay at the local reward of about 0.60 on E1.
-- Beta >= 4 reaches 0.96–0.99 with success 1.0.
-- On E2 only risk-seeking runs escape. Success is 0 for GRPO, 0.08 for
-  beta 2, 0.19 for beta 4 and 0.29 for beta 8 and 16.
+**After:**
+
+- **E1: unchanged** (to within 1e-16). Expected reward 0.980, online 0.775,
+  optimal-arm 0.492, success 1.0. The offsets do not change Eq. 8, and the
+  sampler draws the same arms.
+- **E2.** The experiment is redefined, so its numbers are not comparable with
+  before:
+  - expected reward 0.811 (normalised units), online 0.631, optimal-arm
+    0.153;
+  - global-peak probability 0.553, success 0.562;
+  - local-peak probability 0.419.
+
+**The paper's claim reproduces in the paper's direction on both slices.**
+
+- On E1, beta 0 and 2 stay at the local reward of about 0.60; beta ≥ 4
+  reaches 0.96–0.99, with success 1.0.
+- On E2, success rises with beta:
+
+  | Method | E2 success |
+  |---|---:|
+  | GRPO | 0.27 |
+  | β2 | 0.36 |
+  | β4 | 0.47 |
+  | β8 | 0.56 |
+  | β16 | 0.71 |
 
 ## Headroom check
 
-**E1 (paper scale).** The reference sits at the bound of
-`global_peak_success_rate` (1.0). It is near the bound on `expected_reward`,
-`mean_reward_last_1000` and `global_peak_probability` (0.98), and on
-`local_action_probability` and `local_peak_probability` (0.001 and 0.008).
-Headroom remains on:
+**Where the reference sits at or near the bound:**
 
-- `online_mean_reward`: 0.775; the stronger variant reaches 0.891.
-- `optimal_action_probability`: 0.49; the stronger variant reaches 0.92.
+- **E1:** at the bound of `global_peak_success_rate` (1.0). Near the bound on
+  expected reward, last-1000 reward and global-peak probability (0.98), and on
+  both local probabilities (0.001 and 0.008).
+- **E2:** no metric is at the bound. Expected reward is 0.81, success 0.56
+  and optimal-arm probability 0.15.
 
-**E2 (added).** Added for headroom, at weight 0.6, from where the paper's
-method falls short: scale, and an optimum that is very unlikely under the
-initial policy. No metric is at its bound for the reference, or for any
-method tested; the best is 0.896 success. The reference and both baselines
-(GRPO, beta 2) were run on it. GRPO is clearly below the reference (0.597 vs
-0.699) on a scale that leaves room above it.
+**Room above the reference, shown by the honest variants:**
 
-**Brute force.** Enumerating arms cannot be expressed under the protocol, and
-2^18 arms far exceed the 120,000-interaction budget.
+- E2 success: 0.56 → 1.0.
+- E2 optimal-arm probability: 0.15 → 0.63.
+- E2 online reward: 0.63 → 0.96.
+- E1 online reward: 0.78 → 0.96.
+- E1 optimal-arm probability: 0.49 → 1.0.
 
-## Weights
+**Room above the honest variants.** They split speed against precision:
 
-E2 weight 0.6, E1 weight 0.4 (previously one experiment, weight 1.0).
+- Memory aspiration has online 0.84 and optimal-arm 0.63.
+- Best-seen elitism has online 0.96 and optimal-arm 0.35.
 
-- E1 is the paper's own experiment and the reproduction anchor, but the
-  reference is nearly saturated there.
-- E2 measures the paper's central claim (escaping when good actions are
-  unlikely at the start) where methods actually differ.
+So the best combination is not yet reached on E2. That is the trade-off of
+the paper's Lemma 4.
 
-Metric coefficients are the previous magnitudes, all made positive, since
-only magnitudes count. `online_mean_reward` (0.5) is added for convergence
-speed (Lemma 4, Fig. 3 curves).
+**Baselines:**
+
+- GRPO is clearly below the reference on both experiments (-6.9).
+- β2 is below the reference on E1 and slightly below it on E2.
+- The ported threshold rule is below the reference.
+
+**Brute force:** enumerating arms is not expressible (no arm identities), and
+2^18 arms exceed the budget.
 
 ## Departures from the paper, and things not fixed
 
@@ -230,34 +310,23 @@ speed (Lemma 4, Fig. 3 curves).
   pass@k experiments are out of scope (CPU-only budget).
 - **Budget.** 120,000 interactions per episode; the released script uses
   400,000.
-- **Evaluator owns the update.** The update is applied as
-  theta[a] += lr/N · (A - mean A) on the sampled arms. This equals the
-  paper's softmax policy gradient whenever the advantages sum to zero, which
-  Eq. 8 and GRPO always do. Sampling uses Python's `random` instead of NumPy.
-- **Success definition.** Success is now "at least half the final mass on
-  the global peak". The previous rule also required expected reward >= 0.9.
-- **Metrics now computed by the evaluator.** `mean_reward_last_1000` is
-  computed from the evaluator's own sampling record, and `online_mean_reward`
-  is new.
-- **E2 results in `reference.json`** are the reference reproduction's
-  visible-slice numbers, labelled as such. The paper reports nothing at this
-  scale; its Section 5 numbers are kept under `_paper_reported_section5`. E1
-  keeps the paper's reported numbers unchanged.
-- **Slice difficulty.** E2 difficulty is drawn independently per slice and
-  not stratified, so the visible slice happens to be a little harder (see
-  train/test agreement above). The ordering of methods is unaffected.
-- **Hidden-test runtime.** About 40 minutes for the six reference agents on
-  one CPU core (about 1 s per E1 episode and 3–7 s per E2 episode per method).
-  It scores what the method produces per episode and does no pretraining,
-  since methods need none.
-- **Archived evidence that no longer runs.** The earlier red-team harness
-  (`redteam/run_case.py`, `redteam/support/`) targets the old artifact
-  pipeline. The job-1 agents in `redteam/hardening/agents_v1/` use the old
-  protocol, which exposed arm identities. Both are kept as evidence only.
+- **E2 is this gym's own experiment,** with hidden scales, offsets, 2^18 arms
+  and a recalibrated optimum rarity. It probes the paper's stated limitation,
+  a fixed β under an unknown reward scale. The paper reports no numbers for
+  it. `scoring/reference.json` keeps the paper's Section 5 numbers under
+  `_paper_reported_section5`, and the gym's visible-slice reference
+  reproduction under `results` (not a target).
+- **Weights and coefficients are unchanged**, and no metric was added or
+  removed.
+- **Runtime.** On one CPU core the hidden test of the six reference agents
+  takes about 25 minutes, and the audit about 70 minutes.
 
 ## Reproduce
 
-- `bash scripts/run.sh`: reference set on both slices, then `validate.py`.
-- `bash redteam/hardening/run_audit.sh`: the audit. It restores every file
-  it touches.
-- `python3 redteam/hardening/analyze.py`: the analysis.
+- `bash scripts/run.sh` (about 2.5 h on one core) runs, in order: the
+  reference set on both slices, `validate.py --compare`, the audit (restoring
+  every file it touches) and the analysis. It resumes from stage markers in
+  `logs/job_state/`.
+- `python3 redteam/hardening/calibration/analyze.py` re-summarises the
+  calibration sweep. The sweep itself is
+  `bash redteam/hardening/calibration/run_calibration.sh`, about 45 min.

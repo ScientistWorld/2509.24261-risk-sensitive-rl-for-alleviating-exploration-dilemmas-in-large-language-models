@@ -70,3 +70,6 @@ git checkout -- data/bandit_instances.py data/bandit_spec.py
 cp "$H/out/clean_scores_test.json" scoring/scores_test.json
 cp "$H/out/clean_test_details.json" logs/eval_test_details.json
 python3 "$H/compare.py" | tee "$H/out/compare.log"
+# The chunk outputs stay as evidence; their resume markers go, so a later
+# direct run of this script redoes every chunk.
+rm -f "$C"/*.done

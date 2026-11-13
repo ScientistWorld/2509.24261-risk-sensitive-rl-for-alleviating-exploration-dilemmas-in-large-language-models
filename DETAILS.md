@@ -27,11 +27,13 @@ pass@32 with comparable pass@1.
 ## This Gym
 
 The gym reproduces the paper's Section 5 bandit (100 arms, hidden arm
-permutations) and extends it to a 2^18-arm version where the global optimum is
-much less likely under the initial policy (the regime in which the paper
-reports its method can stay at a local optimum). Methods are advantage rules
-run by the evaluator on hidden instances. The LLM pass@k experiments are out
-of scope (CPU-only budget).
+permutations) and extends it to a 2^18-arm version. In that version every
+instance has its own hidden reward scale and local-peak height, and the
+optimum is less likely under the initial policy. This is where a fixed
+risk-sensitivity, which the paper names as a limitation, can stay at a local
+optimum. Rewards reach the method with a hidden per-group offset. Methods are
+advantage rules run by the evaluator on hidden instances. The LLM pass@k
+experiments are out of scope (CPU-only budget).
 
 ---
 
@@ -55,15 +57,22 @@ A many-armed bandit stands in for a generative policy. The initial softmax
 policy concentrates on a good-but-suboptimal mode; the best actions are rare
 under it. The policy is updated by a fixed policy-gradient step from groups
 of sampled actions, and the question is how each sample in a group should be
-weighted (its advantage) given only the group's rewards.
+weighted (its advantage) given only the group's rewards. Rewards are shown
+with a hidden per-group offset, and in the large-scale experiment each
+instance has its own unknown reward scale and its own unknown height of the
+suboptimal mode. A rule cannot rely on knowing in advance what reward counts
+as good.
 
 ## Success Criteria
 
 A successful system moves probability toward globally high-reward actions
 from a biased, sharply peaked initial policy, including when those actions
-are very unlikely at the start. It should improve best-achievable and
-expected reward, avoid collapsing onto the known suboptimal mode, and do so
-within the fixed interaction budget.
+are unlikely at the start and the reward scale is unknown. It should:
+
+- improve best-achievable and expected reward;
+- converge precisely on the best actions;
+- avoid collapsing onto the suboptimal mode;
+- do all of this within the fixed interaction budget.
 
 ---
 
@@ -100,7 +109,11 @@ sufficiently risk-seeking updates move to the global peak.
 grid plus the released bandit script's 16. The evaluator samples groups of
 N = 16 from the softmax policy and applies the paper's policy-gradient step
 (learning rate 0.1) with the returned advantages. Eq. 8 advantages sum to
-zero within a group, so the evaluator's centring leaves them unchanged.
+zero within a group, so the evaluator's centring leaves them unchanged, and
+they are invariant to the hidden per-group reward offset. On the scaled
+experiment the reward scale varies per instance, so a fixed beta acts as a
+weaker or stronger risk preference from one instance to the next (the paper
+lists choosing beta adaptively as an open problem, Appendix A).
 `rs_grpo_beta8` (the paper's RS-GRPO setting in its pass@k figure) is the
 reference every new method is ranked against. `baseline/grpo_bandit.py` is
 the standalone risk-neutral GRPO baseline.
@@ -111,17 +124,18 @@ the standalone risk-neutral GRPO baseline.
 
 ## Setting
 
-A K-armed bandit with deterministic rewards in [0, 1] and a softmax policy
-over the arms. The initial policy is fixed and sharply peaked on a suboptimal
-"local" peak (reward 0.6); a "global" peak (reward 1.0) carries little initial
-probability. Each episode is 7,500 groups of N = 16 actions (120,000
-interactions).
+A K-armed bandit with deterministic rewards and a softmax policy over the
+arms. The initial policy is fixed and sharply peaked on a suboptimal "local"
+peak; a "global" peak (the best arms) carries little initial probability.
+Each episode is 7,500 groups of N = 16 actions (120,000 interactions).
 
 The evaluator owns everything outside the method:
 
 1. It samples each group of 16 actions from the current policy.
 2. It sends the method the 16 rewards of the group (not which arms were
-   played) and receives 16 advantages.
+   played), all shifted by one hidden offset drawn uniformly from [-2, 2]
+   for that group. Rewards can therefore be compared only within a group.
+   It receives 16 advantages.
 3. It checks the advantages (finite, |A| <= 8), centres them within the
    group, and applies the fixed softmax policy-gradient step with learning
    rate 0.1 to the sampled arms.
@@ -134,12 +148,21 @@ reference agents in `method/` and `baseline/` are examples.
 
 ## Experiments
 
-- `bandit_escape` (weight 0.4): the paper-scale 100-arm problem, with the arm
-  labels shuffled in every episode (24 episodes per slice).
-- `bandit_escape_scaled` (weight 0.6): the same two reward peaks inside
-  2^18 arms. The global peak's initial probability varies from 0.1% to 15%
-  across episodes, it is hidden among similarly likely low-reward arms, and
-  the remaining mass is spread over a long tail (48 episodes per slice).
+- `bandit_escape` (weight 0.4): the paper-scale 100-arm problem (background
+  0.1, local peak 0.6, global peak 1.0), with the arm labels shuffled in every
+  episode (24 episodes per slice).
+- `bandit_escape_scaled` (weight 0.6): two reward peaks inside 2^18 arms.
+  Every episode has its own hidden reward scale:
+  - a background reward;
+  - a span from the background to the best arm (log-uniform in 0.3-1.0);
+  - a local-peak height (uniform in 30-85% of the span).
+
+  The global peak's initial probability varies from 3% to 30% across
+  episodes (log-uniform). It is hidden among similarly likely
+  background-reward arms, and the remaining mass is spread over a long tail.
+  The three parameters are stratified over the 96 episodes of a slice.
+  Metrics are reported in the episode's normalised units (background 0, best
+  arm 1). `data/bandit_instances.py` is a visible copy of both generators.
 
 ## Metrics (per experiment, averaged over episodes)
 
@@ -149,8 +172,8 @@ reference agents in `method/` and `baseline/` are examples.
 - `online_mean_reward` (higher): mean reward of all 120,000 sampled actions,
   which measures how fast the method gets there.
 - `optimal_action_probability` (higher): final probability of the best arm.
-- `global_peak_probability` (higher): final probability of arms with reward
-  >= 0.9.
+- `global_peak_probability` (higher): final probability of the global-peak
+  arms whose reward is at least 0.9 (of the span, on the scaled experiment).
 - `global_peak_success_rate` (higher): fraction of episodes whose final policy
   puts at least half its mass on those arms.
 - `local_action_probability` (lower): final probability of the local peak's
@@ -170,15 +193,16 @@ for lower-is-better) on every metric of both experiments.
   visible slice and writes `scoring/scores_train.json`.
 - `bash scripts/evaluate.sh` does the same and writes `scoring/scores.json`.
   It accepts development flags such as `--methods name --max-episodes 2`.
-- The hidden slice (`scripts/evaluate_test.sh`) uses different instances and
-  sampling seeds from the same distribution and the same interface.
+- The hidden slice (`scripts/evaluate_test.sh`) uses different instances,
+  offsets and sampling seeds from the same distribution and the same
+  interface.
 
 Every `*.py` file directly in `method/` or `baseline/` whose name does not
 start with `_` is an agent file and is scored. Helpers belong in subpackages
 or underscore-prefixed files.
 
-A run of all reference agents takes about 40 minutes per slice on one CPU
-core.
+A run of the six reference agents takes roughly 10-20 minutes per slice on
+one CPU core.
 
 ---
 
