@@ -5,4 +5,4 @@ action: submit
 gpus: 0
 test: false
 milestone: core_claim_plus
-notes: "Final hardening run, resumable per stage (CPU, ~2.5 h): reference set + GRPO baseline on both slices (hidden per-instance reward scales, per-group offsets), fill visible-slice E2 numbers, validate, audit (honest memory-based variants, ported/verbatim threshold shortcuts, forged/NaN/oversized/crash/helper, ground-truth edit) through the unchanged hidden test, paired-bootstrap analysis."
+notes: "Resume final run (CPU): reference slices already done (stage markers), so this runs fill_reference + validate, then the audit as resumable per-agent chunks through the unchanged hidden-test evaluator (reference agents under edited ground truth, honest memory-based variants, ported/verbatim threshold shortcuts, forged/NaN/oversized/crash/helper), merge, compare, paired-bootstrap analysis."
