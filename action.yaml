@@ -1,8 +1,6 @@
 # Once you set action to 'submit' or 'done', STOP immediately.
 # Do NOT sleep, poll, or wait for jobs. The system reads this file
 # only after your turn ends.
-action: submit
-gpus: 0
-test: false
+action: done
 milestone: core_claim_plus
-notes: "Resume final run (CPU): reference slices already done (stage markers), so this runs fill_reference + validate, then the audit as resumable per-agent chunks through the unchanged hidden-test evaluator (reference agents under edited ground truth, honest memory-based variants, ported/verbatim threshold shortcuts, forged/NaN/oversized/crash/helper), merge, compare, paired-bootstrap analysis."
+notes: "Hardened: hidden per-group offsets + hidden per-instance reward scale/success level (optimum mass recalibrated to 3-30%); public-scale threshold shortcut +6.20 -> -5.92 (best port -0.94); honest scale-free memory variants +5.3/+5.8; GRPO -6.9; reference and baselines rerun; see HARDENING.md."
