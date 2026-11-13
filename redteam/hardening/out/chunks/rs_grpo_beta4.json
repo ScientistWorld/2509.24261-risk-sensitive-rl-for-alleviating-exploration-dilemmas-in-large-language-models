@@ -1,0 +1,45 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "_slice": "test",
+      "_episodes": 24,
+      "results": {
+        "rs_grpo_beta4": {
+          "expected_reward": 0.9866553615945185,
+          "mean_reward_last_1000": 0.9871447353551414,
+          "online_mean_reward": 0.7448185799108277,
+          "optimal_action_probability": 0.616128370933223,
+          "global_peak_probability": 0.9884214411954574,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.0014815012901414919,
+          "local_peak_probability": 0.006615336646274546
+        }
+      }
+    },
+    "bandit_escape_scaled": {
+      "_slice": "test",
+      "_episodes": 96,
+      "results": {
+        "rs_grpo_beta4": {
+          "expected_reward": 0.7797540825193509,
+          "mean_reward_last_1000": 0.7790151375870954,
+          "online_mean_reward": 0.6163054558951362,
+          "optimal_action_probability": 0.1137011143747924,
+          "global_peak_probability": 0.4587344383240186,
+          "global_peak_success_rate": 0.46875,
+          "local_action_probability": 0.4837071755584829,
+          "local_peak_probability": 0.5227720935142482
+        }
+      }
+    }
+  },
+  "_failures": {},
+  "_protocol": {
+    "num_batches": 7500,
+    "batch_size": 16,
+    "learning_rate": 0.1,
+    "advantage_cap": 8.0,
+    "group_offset_half_width": 2.0,
+    "partial_run": true
+  }
+}

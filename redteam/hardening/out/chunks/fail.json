@@ -1,0 +1,110 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "_slice": "test",
+      "_episodes": 24,
+      "results": {
+        "shortcut_crash": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "audit_shortcut_hidden_helper": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "shortcut_nan_advantage": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "shortcut_oversized_advantage": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        }
+      }
+    },
+    "bandit_escape_scaled": {
+      "_slice": "test",
+      "_episodes": 96,
+      "results": {
+        "shortcut_crash": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "audit_shortcut_hidden_helper": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "shortcut_nan_advantage": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "shortcut_oversized_advantage": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        }
+      }
+    }
+  },
+  "_failures": {
+    "audit_shortcut_hidden_helper": "discovery: --list did not print a non-empty JSON list of names",
+    "shortcut_crash": "bandit_escape episode 0: agent exited (code None)",
+    "shortcut_nan_advantage": "bandit_escape episode 0: advantage is not finite",
+    "shortcut_oversized_advantage": "bandit_escape episode 0: advantage -9.584699597535606 exceeds the cap 8.0"
+  },
+  "_protocol": {
+    "num_batches": 7500,
+    "batch_size": 16,
+    "learning_rate": 0.1,
+    "advantage_cap": 8.0,
+    "group_offset_half_width": 2.0,
+    "partial_run": true
+  }
+}

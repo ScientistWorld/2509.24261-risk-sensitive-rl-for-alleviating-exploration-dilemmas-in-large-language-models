@@ -1,0 +1,45 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "_slice": "test",
+      "_episodes": 24,
+      "results": {
+        "old_aspiration_known_scale": {
+          "expected_reward": 0.5999483024719423,
+          "mean_reward_last_1000": 0.5999352060170297,
+          "online_mean_reward": 0.5962055598488303,
+          "optimal_action_probability": 2.4233195587069614e-06,
+          "global_peak_probability": 1.1945141044134165e-05,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 0.9996839643327613,
+          "local_peak_probability": 0.9998562902606536
+        }
+      }
+    },
+    "bandit_escape_scaled": {
+      "_slice": "test",
+      "_episodes": 96,
+      "results": {
+        "old_aspiration_known_scale": {
+          "expected_reward": 0.6895680865363484,
+          "mean_reward_last_1000": 0.6895656041038306,
+          "online_mean_reward": 0.679228823362534,
+          "optimal_action_probability": 0.04156781446116145,
+          "global_peak_probability": 0.23955144594339428,
+          "global_peak_success_rate": 0.23958333333333334,
+          "local_action_probability": 0.6662927056579623,
+          "local_peak_probability": 0.7602436149197498
+        }
+      }
+    }
+  },
+  "_failures": {},
+  "_protocol": {
+    "num_batches": 7500,
+    "batch_size": 16,
+    "learning_rate": 0.1,
+    "advantage_cap": 8.0,
+    "group_offset_half_width": 2.0,
+    "partial_run": true
+  }
+}

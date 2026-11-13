@@ -1,0 +1,9 @@
+{
+  "reference_rows_identical_after_ground_truth_edit": true,
+  "failures": {
+    "audit_shortcut_hidden_helper": "discovery: --list did not print a non-empty JSON list of names",
+    "shortcut_crash": "bandit_escape episode 0: agent exited (code None)",
+    "shortcut_nan_advantage": "bandit_escape episode 0: advantage is not finite",
+    "shortcut_oversized_advantage": "bandit_escape episode 0: advantage -9.584699597535606 exceeds the cap 8.0"
+  }
+}

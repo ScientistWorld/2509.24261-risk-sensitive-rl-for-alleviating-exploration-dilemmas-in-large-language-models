@@ -1,0 +1,437 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "results": {
+        "shortcut_crash": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "audit_shortcut_hidden_helper": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "shortcut_nan_advantage": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "shortcut_oversized_advantage": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "rs_grpo_beta8": {
+          "expected_reward": 0.9795067221781767,
+          "mean_reward_last_1000": 0.9802227775430451,
+          "online_mean_reward": 0.775100761625013,
+          "optimal_action_probability": 0.49182914863313093,
+          "global_peak_probability": 0.9816760416238725,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.0010823780840996733,
+          "local_peak_probability": 0.007627625649239362
+        },
+        "grpo_baseline": {
+          "expected_reward": 0.5976552342825112,
+          "mean_reward_last_1000": 0.5978489298320208,
+          "online_mean_reward": 0.5539117130037612,
+          "optimal_action_probability": 8.602800100582945e-05,
+          "global_peak_probability": 0.00041403390458146796,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 0.9707464313607356,
+          "local_peak_probability": 0.9945721773431503
+        },
+        "grpo_beta0": {
+          "expected_reward": 0.5976552342825112,
+          "mean_reward_last_1000": 0.5978489298320208,
+          "online_mean_reward": 0.5539117130037612,
+          "optimal_action_probability": 8.602800100582945e-05,
+          "global_peak_probability": 0.00041403390458146796,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 0.9707464313607356,
+          "local_peak_probability": 0.9945721773431503
+        },
+        "rs_grpo_beta2": {
+          "expected_reward": 0.5962543649761056,
+          "mean_reward_last_1000": 0.5964992693570043,
+          "online_mean_reward": 0.5473701886985165,
+          "optimal_action_probability": 0.0002768856635782924,
+          "global_peak_probability": 0.0011877181668036216,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 0.9603653000256793,
+          "local_peak_probability": 0.989801996083369
+        },
+        "rs_grpo_beta4": {
+          "expected_reward": 0.9866553615945185,
+          "mean_reward_last_1000": 0.9871447353551414,
+          "online_mean_reward": 0.7448185799108277,
+          "optimal_action_probability": 0.616128370933223,
+          "global_peak_probability": 0.9884214411954574,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.0014815012901414919,
+          "local_peak_probability": 0.006615336646274546
+        },
+        "rs_grpo_beta16": {
+          "expected_reward": 0.9633388324676037,
+          "mean_reward_last_1000": 0.9640719956609961,
+          "online_mean_reward": 0.6565870555862213,
+          "optimal_action_probability": 0.7527831138292793,
+          "global_peak_probability": 0.9491489519071069,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.002716770800133705,
+          "local_peak_probability": 0.01968327547032338
+        },
+        "honest_memory_aspiration": {
+          "expected_reward": 0.9982878737412335,
+          "mean_reward_last_1000": 0.9986233983600904,
+          "online_mean_reward": 0.8896745107978029,
+          "optimal_action_probability": 0.9972611992711271,
+          "global_peak_probability": 0.9974205406169915,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.0001031222024184102,
+          "local_peak_probability": 0.0010140105648042857
+        },
+        "honest_best_seen": {
+          "expected_reward": 0.9855069495798752,
+          "mean_reward_last_1000": 0.9855292601812927,
+          "online_mean_reward": 0.9632995827426326,
+          "optimal_action_probability": 0.2098492152512633,
+          "global_peak_probability": 0.9993608509444482,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 2.5951920928879758e-05,
+          "local_peak_probability": 0.00025176640840592665
+        },
+        "old_aspiration_known_scale": {
+          "expected_reward": 0.5999483024719423,
+          "mean_reward_last_1000": 0.5999352060170297,
+          "online_mean_reward": 0.5962055598488303,
+          "optimal_action_probability": 2.4233195587069614e-06,
+          "global_peak_probability": 1.1945141044134165e-05,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 0.9996839643327613,
+          "local_peak_probability": 0.9998562902606536
+        },
+        "variant_success_only": {
+          "expected_reward": 0.5946516287709828,
+          "mean_reward_last_1000": 0.5947378277703761,
+          "online_mean_reward": 0.574990702704764,
+          "optimal_action_probability": 2.935775973261163e-05,
+          "global_peak_probability": 0.00015070706908047447,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 0.5319599782353589,
+          "local_peak_probability": 0.9981102306970294
+        },
+        "shortcut_forged_output": {
+          "expected_reward": 0.9795067221781767,
+          "mean_reward_last_1000": 0.9802227775430451,
+          "online_mean_reward": 0.775100761625013,
+          "optimal_action_probability": 0.49182914863313093,
+          "global_peak_probability": 0.9816760416238725,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.0010823780840996733,
+          "local_peak_probability": 0.007627625649239362
+        },
+        "shortcut_threshold_t0.2": {
+          "expected_reward": 0.9499611901892013,
+          "mean_reward_last_1000": 0.9499090424703281,
+          "online_mean_reward": 0.9312198347737061,
+          "optimal_action_probability": 0.08333217444921398,
+          "global_peak_probability": 0.8747339261144211,
+          "global_peak_success_rate": 0.875,
+          "local_action_probability": 1.7230560555841283e-05,
+          "local_peak_probability": 0.0001705842506393731
+        },
+        "shortcut_threshold_t0.25": {
+          "expected_reward": 0.9499611901892013,
+          "mean_reward_last_1000": 0.9499090424703281,
+          "online_mean_reward": 0.9312198347737061,
+          "optimal_action_probability": 0.08333217444921398,
+          "global_peak_probability": 0.8747339261144211,
+          "global_peak_success_rate": 0.875,
+          "local_action_probability": 1.7230560555841283e-05,
+          "local_peak_probability": 0.0001705842506393731
+        },
+        "shortcut_threshold_t0.3": {
+          "expected_reward": 0.9499611901892013,
+          "mean_reward_last_1000": 0.9499090424703281,
+          "online_mean_reward": 0.9312198347737061,
+          "optimal_action_probability": 0.08333217444921398,
+          "global_peak_probability": 0.8747339261144211,
+          "global_peak_success_rate": 0.875,
+          "local_action_probability": 1.7230560555841283e-05,
+          "local_peak_probability": 0.0001705842506393731
+        },
+        "shortcut_threshold_t0.4": {
+          "expected_reward": 0.9499611901892013,
+          "mean_reward_last_1000": 0.9499090424703281,
+          "online_mean_reward": 0.9312198347737061,
+          "optimal_action_probability": 0.08333217444921398,
+          "global_peak_probability": 0.8747339261144211,
+          "global_peak_success_rate": 0.875,
+          "local_action_probability": 1.7230560555841283e-05,
+          "local_peak_probability": 0.0001705842506393731
+        },
+        "shortcut_threshold_t0.5": {
+          "expected_reward": 0.9499611901892013,
+          "mean_reward_last_1000": 0.9499090424703281,
+          "online_mean_reward": 0.9312198347737061,
+          "optimal_action_probability": 0.08333217444921398,
+          "global_peak_probability": 0.8747339261144211,
+          "global_peak_success_rate": 0.875,
+          "local_action_probability": 1.7230560555841283e-05,
+          "local_peak_probability": 0.0001705842506393731
+        }
+      }
+    },
+    "bandit_escape_scaled": {
+      "results": {
+        "shortcut_crash": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "audit_shortcut_hidden_helper": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "shortcut_nan_advantage": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "shortcut_oversized_advantage": {
+          "expected_reward": 0.0,
+          "mean_reward_last_1000": 0.0,
+          "online_mean_reward": 0.0,
+          "optimal_action_probability": 0.0,
+          "global_peak_probability": 0.0,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 1.0,
+          "local_peak_probability": 1.0
+        },
+        "rs_grpo_beta8": {
+          "expected_reward": 0.8110293989546381,
+          "mean_reward_last_1000": 0.8107403021658843,
+          "online_mean_reward": 0.6306689164097717,
+          "optimal_action_probability": 0.15321464992654327,
+          "global_peak_probability": 0.5531299860553353,
+          "global_peak_success_rate": 0.5625,
+          "local_action_probability": 0.37537705519848846,
+          "local_peak_probability": 0.41881140564592817
+        },
+        "grpo_baseline": {
+          "expected_reward": 0.6961793980490124,
+          "mean_reward_last_1000": 0.6953687893510695,
+          "online_mean_reward": 0.5562486582975853,
+          "optimal_action_probability": 0.052634482518119384,
+          "global_peak_probability": 0.27062051180771646,
+          "global_peak_success_rate": 0.2708333333333333,
+          "local_action_probability": 0.650980420546144,
+          "local_peak_probability": 0.70723903281013
+        },
+        "grpo_beta0": {
+          "expected_reward": 0.6961793980490124,
+          "mean_reward_last_1000": 0.6953687893510695,
+          "online_mean_reward": 0.5562486582975853,
+          "optimal_action_probability": 0.052634482518119384,
+          "global_peak_probability": 0.27062051180771646,
+          "global_peak_success_rate": 0.2708333333333333,
+          "local_action_probability": 0.650980420546144,
+          "local_peak_probability": 0.70723903281013
+        },
+        "rs_grpo_beta2": {
+          "expected_reward": 0.7463969974159022,
+          "mean_reward_last_1000": 0.7462163757161644,
+          "online_mean_reward": 0.5948611231794526,
+          "optimal_action_probability": 0.08205287090731322,
+          "global_peak_probability": 0.36411472140643336,
+          "global_peak_success_rate": 0.3645833333333333,
+          "local_action_probability": 0.5746806657765245,
+          "local_peak_probability": 0.6174637236237568
+        },
+        "rs_grpo_beta4": {
+          "expected_reward": 0.7797540825193509,
+          "mean_reward_last_1000": 0.7790151375870954,
+          "online_mean_reward": 0.6163054558951362,
+          "optimal_action_probability": 0.1137011143747924,
+          "global_peak_probability": 0.4587344383240186,
+          "global_peak_success_rate": 0.46875,
+          "local_action_probability": 0.4837071755584829,
+          "local_peak_probability": 0.5227720935142482
+        },
+        "rs_grpo_beta16": {
+          "expected_reward": 0.8371876559350224,
+          "mean_reward_last_1000": 0.8361222986131681,
+          "online_mean_reward": 0.5845079661527295,
+          "optimal_action_probability": 0.22846672178223096,
+          "global_peak_probability": 0.6695201007913449,
+          "global_peak_success_rate": 0.7083333333333334,
+          "local_action_probability": 0.2121702555328323,
+          "local_peak_probability": 0.2670761356343435
+        },
+        "honest_memory_aspiration": {
+          "expected_reward": 0.9911255339946949,
+          "mean_reward_last_1000": 0.9911763381249553,
+          "online_mean_reward": 0.8415643532892321,
+          "optimal_action_probability": 0.6340994839049526,
+          "global_peak_probability": 0.9978158562399915,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 8.903591838016756e-05,
+          "local_peak_probability": 0.0007176655647921608
+        },
+        "honest_best_seen": {
+          "expected_reward": 0.9869368802384759,
+          "mean_reward_last_1000": 0.9869105345487229,
+          "online_mean_reward": 0.9591160567608572,
+          "optimal_action_probability": 0.35394253705418893,
+          "global_peak_probability": 0.9996382659973845,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 1.278636775400618e-05,
+          "local_peak_probability": 0.00011852083351773285
+        },
+        "old_aspiration_known_scale": {
+          "expected_reward": 0.6895680865363484,
+          "mean_reward_last_1000": 0.6895656041038306,
+          "online_mean_reward": 0.679228823362534,
+          "optimal_action_probability": 0.04156781446116145,
+          "global_peak_probability": 0.23955144594339428,
+          "global_peak_success_rate": 0.23958333333333334,
+          "local_action_probability": 0.6662927056579623,
+          "local_peak_probability": 0.7602436149197498
+        },
+        "variant_success_only": {
+          "expected_reward": 0.709307064831167,
+          "mean_reward_last_1000": 0.7093196086012155,
+          "online_mean_reward": 0.6424140626398668,
+          "optimal_action_probability": 0.07281354930628979,
+          "global_peak_probability": 0.29109459700809376,
+          "global_peak_success_rate": 0.2916666666666667,
+          "local_action_probability": 0.3449048912004949,
+          "local_peak_probability": 0.695697375046325
+        },
+        "shortcut_forged_output": {
+          "expected_reward": 0.8110293989546381,
+          "mean_reward_last_1000": 0.8107403021658843,
+          "online_mean_reward": 0.6306689164097717,
+          "optimal_action_probability": 0.15321464992654327,
+          "global_peak_probability": 0.5531299860553353,
+          "global_peak_success_rate": 0.5625,
+          "local_action_probability": 0.37537705519848846,
+          "local_peak_probability": 0.41881140564592817
+        },
+        "shortcut_threshold_t0.2": {
+          "expected_reward": 0.6548641135148818,
+          "mean_reward_last_1000": 0.6548796126342379,
+          "online_mean_reward": 0.6444152769088695,
+          "optimal_action_probability": 0.03124490057040194,
+          "global_peak_probability": 0.11456499421027067,
+          "global_peak_success_rate": 0.11458333333333333,
+          "local_action_probability": 0.23831504547624863,
+          "local_peak_probability": 0.7706670015933481
+        },
+        "shortcut_threshold_t0.25": {
+          "expected_reward": 0.6894458162448894,
+          "mean_reward_last_1000": 0.6893982199817633,
+          "online_mean_reward": 0.6801225492264672,
+          "optimal_action_probability": 0.04166101249036155,
+          "global_peak_probability": 0.1874572987477291,
+          "global_peak_success_rate": 0.1875,
+          "local_action_probability": 0.2187113694233341,
+          "local_peak_probability": 0.6769396179259325
+        },
+        "shortcut_threshold_t0.3": {
+          "expected_reward": 0.765672306756722,
+          "mean_reward_last_1000": 0.7656836994578188,
+          "online_mean_reward": 0.7524796916897837,
+          "optimal_action_probability": 0.10412572783613694,
+          "global_peak_probability": 0.3853111776431651,
+          "global_peak_success_rate": 0.3854166666666667,
+          "local_action_probability": 0.22863302608352068,
+          "local_peak_probability": 0.5103271544888142
+        },
+        "shortcut_threshold_t0.4": {
+          "expected_reward": 0.7065642738739545,
+          "mean_reward_last_1000": 0.7061876145538927,
+          "online_mean_reward": 0.6952825926043124,
+          "optimal_action_probability": 0.12620220104106633,
+          "global_peak_probability": 0.43282962329322916,
+          "global_peak_success_rate": 0.4270833333333333,
+          "local_action_probability": 0.12411400019462582,
+          "local_peak_probability": 0.3494218168868408
+        },
+        "shortcut_threshold_t0.5": {
+          "expected_reward": 0.6156621012178133,
+          "mean_reward_last_1000": 0.6150209413560039,
+          "online_mean_reward": 0.6067909954677547,
+          "optimal_action_probability": 0.07529750990928218,
+          "global_peak_probability": 0.35554549653463946,
+          "global_peak_success_rate": 0.34375,
+          "local_action_probability": 0.06950769666599502,
+          "local_peak_probability": 0.3261397779390643
+        }
+      }
+    }
+  },
+  "_failures": {
+    "audit_shortcut_hidden_helper": "discovery: --list did not print a non-empty JSON list of names",
+    "shortcut_crash": "bandit_escape episode 0: agent exited (code None)",
+    "shortcut_nan_advantage": "bandit_escape episode 0: advantage is not finite",
+    "shortcut_oversized_advantage": "bandit_escape episode 0: advantage -9.584699597535606 exceeds the cap 8.0"
+  },
+  "_chunks": [
+    "fail",
+    "rs_grpo_beta8",
+    "grpo_baseline",
+    "grpo_beta0",
+    "rs_grpo_beta2",
+    "rs_grpo_beta4",
+    "rs_grpo_beta16",
+    "honest_memory_aspiration",
+    "honest_best_seen",
+    "old_aspiration_known_scale",
+    "variant_success_only",
+    "shortcut_forged_output",
+    "shortcut_threshold_t0.2",
+    "shortcut_threshold_t0.25",
+    "shortcut_threshold_t0.3",
+    "shortcut_threshold_t0.4",
+    "shortcut_threshold_t0.5"
+  ]
+}

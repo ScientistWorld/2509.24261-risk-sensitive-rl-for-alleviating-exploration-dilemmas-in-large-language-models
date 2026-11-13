@@ -1,0 +1,99 @@
+{
+  "experiments": {
+    "bandit_escape": {
+      "results": {
+        "honest_memory_aspiration": {
+          "expected_reward": 0.9982730112148936,
+          "mean_reward_last_1000": 0.9980198812165059,
+          "online_mean_reward": 0.8905323618496417,
+          "optimal_action_probability": 0.9972361910195447,
+          "global_peak_probability": 0.9973987182071301,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 0.00010533857640989238,
+          "local_peak_probability": 0.0010218531541071661
+        },
+        "honest_best_seen": {
+          "expected_reward": 0.9884963113223163,
+          "mean_reward_last_1000": 0.988425548867559,
+          "online_mean_reward": 0.9663370492600283,
+          "optimal_action_probability": 0.37483269887368403,
+          "global_peak_probability": 0.9994380374138672,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 2.2569752081022426e-05,
+          "local_peak_probability": 0.0002196228412707762
+        },
+        "shortcut_threshold_t0.3": {
+          "expected_reward": 0.9691528055152124,
+          "mean_reward_last_1000": 0.9689648584004243,
+          "online_mean_reward": 0.9497359804800225,
+          "optimal_action_probability": 0.12496349551306214,
+          "global_peak_probability": 0.9995296911537123,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 1.471730485212823e-05,
+          "local_peak_probability": 0.00014750115927776038
+        },
+        "variant_success_only": {
+          "expected_reward": 0.5958965344372995,
+          "mean_reward_last_1000": 0.5957976393528067,
+          "online_mean_reward": 0.5770420247723286,
+          "optimal_action_probability": 3.168928446217804e-05,
+          "global_peak_probability": 0.00015092209054046779,
+          "global_peak_success_rate": 0.0,
+          "local_action_probability": 0.6595459749329756,
+          "local_peak_probability": 0.9980691200189115
+        }
+      }
+    },
+    "bandit_escape_scaled": {
+      "results": {
+        "honest_memory_aspiration": {
+          "expected_reward": 0.9896801092939689,
+          "mean_reward_last_1000": 0.9899886299684043,
+          "online_mean_reward": 0.8388415683344962,
+          "optimal_action_probability": 0.6340396986439824,
+          "global_peak_probability": 0.987527104983099,
+          "global_peak_success_rate": 0.9895833333333334,
+          "local_action_probability": 0.010231490807452856,
+          "local_peak_probability": 0.01091572844353073
+        },
+        "honest_best_seen": {
+          "expected_reward": 0.9852879814368222,
+          "mean_reward_last_1000": 0.9853155719982841,
+          "online_mean_reward": 0.9560452464419464,
+          "optimal_action_probability": 0.27073630954129807,
+          "global_peak_probability": 0.9996387062832458,
+          "global_peak_success_rate": 1.0,
+          "local_action_probability": 1.2329132288509382e-05,
+          "local_peak_probability": 0.00011545499214542584
+        },
+        "shortcut_threshold_t0.3": {
+          "expected_reward": 0.782742161381687,
+          "mean_reward_last_1000": 0.7827736885877546,
+          "online_mean_reward": 0.7622052546431912,
+          "optimal_action_probability": 0.06248780921044636,
+          "global_peak_probability": 0.35409113311428064,
+          "global_peak_success_rate": 0.3541666666666667,
+          "local_action_probability": 0.15655397216758252,
+          "local_peak_probability": 0.4791052588884625
+        },
+        "variant_success_only": {
+          "expected_reward": 0.7412607471861752,
+          "mean_reward_last_1000": 0.7413702733501616,
+          "online_mean_reward": 0.6658794513075037,
+          "optimal_action_probability": 0.0831919717240641,
+          "global_peak_probability": 0.31241423373007204,
+          "global_peak_success_rate": 0.3125,
+          "local_action_probability": 0.35662271037461163,
+          "local_peak_probability": 0.6329068663928458
+        }
+      }
+    }
+  },
+  "_failures": {},
+  "_chunks": [
+    "train_honest_memory_aspiration",
+    "train_honest_best_seen",
+    "train_shortcut_threshold_t0.3",
+    "train_variant_success_only"
+  ]
+}
